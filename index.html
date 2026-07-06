@@ -226,14 +226,17 @@
 
         let valP1 = "—", valX = "—", valP2 = "—";
         if (match.bookmakers && match.bookmakers.length > 0) {
-          const market = match.bookmakers[0].markets?.find(m => m.key === "h2h");
-          if (market && market.outcomes) {
-            const o1 = market.outcomes.find(o => o.name === match.home_team);
-            const o2 = market.outcomes.find(o => o.name === match.away_team);
-            const ox = market.outcomes.find(o => o.name === "Draw" || o.name === "Ничья");
-            if (o1) valP1 = parseFloat(o1.price).toFixed(2);
-            if (o2) valP2 = parseFloat(o2.price).toFixed(2);
-            if (ox) valX = parseFloat(ox.price).toFixed(2);
+          const firstBookie = match.bookmakers[0];
+          if (firstBookie && firstBookie.markets && firstBookie.markets.length > 0) {
+            const market = firstBookie.markets.find(m => m.key === "h2h");
+            if (market && market.outcomes) {
+              const o1 = market.outcomes.find(o => o.name === match.home_team);
+              const o2 = market.outcomes.find(o => o.name === match.away_team);
+              const ox = market.outcomes.find(o => o.name === "Draw" || o.name === "Ничья");
+              if (o1) valP1 = parseFloat(o1.price).toFixed(2);
+              if (o2) valP2 = parseFloat(o2.price).toFixed(2);
+              if (ox) valX = parseFloat(ox.price).toFixed(2);
+            }
           }
         }
 
@@ -310,7 +313,7 @@
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
     
-    document.getElementById('live-counter').innerHTML = ' ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ' + filtered.length + ' активных матчей на сегодня и завтра';
+    document.getElementById('live-counter').innerHTML = ' ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ' + filtered.length + ' active-матчей на сегодня и завтра';
     
     const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей пока нет</div>' : list.map(m => `
       <div class="match-card ${m.status}">
