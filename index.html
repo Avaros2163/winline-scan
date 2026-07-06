@@ -228,7 +228,7 @@
         if (match.bookmakers && match.bookmakers.length > 0) {
           const firstBookie = match.bookmakers[0];
           if (firstBookie && firstBookie.markets && firstBookie.markets.length > 0) {
-            const market = firstBookie.markets.find(m => m.key === "h2h");
+          const market = firstBookie.markets.find(m => m.key === "h2h");
             if (market && market.outcomes) {
               const o1 = market.outcomes.find(o => o.name === match.home_team);
               const o2 = market.outcomes.find(o => o.name === match.away_team);
