@@ -282,7 +282,6 @@
     const sortArr = (arr) => isFilterActive ? [...arr.filter(m=>m.status==="status-good").sort(compareTimeSmart), ...arr.filter(m=>m.status==="status-bad").sort(compareTimeSmart)] : [...arr].sort(compareTimeSmart);
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
-    document.getElementById('live-counter').innerHTML = ` ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ${filtered.length} ЖИВЫХ сегодняшних матчей из базы данных`;
     
     const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей пока нет</div>' : list.map(m => `
       <div class="match-card ${m.status}">
