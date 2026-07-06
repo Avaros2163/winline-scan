@@ -268,7 +268,7 @@
 
   function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
 
-  function processAndRender() {
+    function processAndRender() {
     let filtered = globalCachedMatches;
     if (currentSearchQuery !== "") { 
       filtered = globalCachedMatches.filter(m =>
@@ -282,6 +282,8 @@
     const sortArr = (arr) => isFilterActive ? [...arr.filter(m=>m.status==="status-good").sort(compareTimeSmart), ...arr.filter(m=>m.status==="status-bad").sort(compareTimeSmart)] : [...arr].sort(compareTimeSmart);
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
+    
+    document.getElementById('live-counter').innerHTML = ' ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ' + filtered.length + ' активных матчей на сегодня и завтра';
     
     const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей пока нет</div>' : list.map(m => `
       <div class="match-card ${m.status}">
@@ -302,7 +304,8 @@
         <div class="bot-verdict">${m.verdict}</div>
         <button class="share-card-btn" id="sh-${m.id}" onclick="copyMatch(${m.id})">Поделиться</button>
       </div>
-        document.getElementById('live-counter').innerHTML = ' ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ' + filtered.length + ' активных матчей на сегодня и завтра';
+    `).join('');
+
     document.getElementById('sports-container').innerHTML = `
       <div class="sport-column col-football"><div class="column-title"><span class="sport-name">${getTitle(" Футбол", football)}</span></div>${renderCol(football)}</div>
       <div class="sport-column col-tennis"><div class="column-title"><span class="sport-name">${getTitle(" Теннис", tennis)}</span></div>${renderCol(tennis)}</div>
