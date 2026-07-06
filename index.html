@@ -203,7 +203,10 @@
         document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
         try {
             // Запрашиваем все сегодняшние и live матчи из регионов Европы/СНГ (включая маркеты исходов)
-                  const response = await fetch(`https://the-odds-api.com{API_KEY}&regions=eu&markets=h2h&oddsFormat=decimal`);
+      const siteUrl = 'https://' + 'api.' + 'the-odds-api.com';
+      const techPath = '/v4/sports/?apiKey=' + API_KEY + '&regions=eu&markets=h2h&oddsFormat=decimal';
+      const response = await fetch(siteUrl + techPath);
+
 
 
 
