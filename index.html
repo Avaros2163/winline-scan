@@ -205,7 +205,7 @@
       const data = await response.json();
       const list = [];
 
-            data.forEach((match, idx) => {
+                  data.forEach((match, idx) => {
         let sportType = "football";
         const title = match.sport_key.toLowerCase();
         const group = match.sport_title.toLowerCase();
@@ -215,6 +215,7 @@
         } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
           sportType = "hockey";
         }
+
 
 
         const valP1 = 2.10;
