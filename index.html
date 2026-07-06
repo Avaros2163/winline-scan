@@ -234,7 +234,8 @@
                         const outcomes = markets[0].outcomes;
                         const o1 = outcomes.find(o => o.name === match.home_team);
                         const o2 = outcomes.find(o => o.name === match.away_team);
-                        const ox = outcomes.find(o => o.name.toLowerCase() === "draw" || o.name === "Ничья");
+                        const outcomeX = outcomes.find(o => o.name === "Ничья" || o.name === "Draw");
+
                         if (o1) p1 = parseFloat(o1.price).toFixed(2);
                         if (o2) p2 = parseFloat(o2.price).toFixed(2);
                         if (ox) x = parseFloat(ox.price).toFixed(2);
