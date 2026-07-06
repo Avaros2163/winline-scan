@@ -217,7 +217,7 @@
 
       const part1 = 'https://' + 'api.';
       const part2 = 'the-odds-api.com' + '/v4/sports/upcoming/odds/';
-      const part3 = '?apiKey=' + API_KEY + '&regions=eu,au&markets=h2h&oddsFormat=decimal&commenceTimeTo=' + timeIso;
+      const part3 = '?apiKey=a70b0ee6d06d44ef301828f09db07e33&regions=eu,au&markets=h2h&oddsFormat=decimal&commenceTimeTo=' + timeIso;
       const response = await fetch(part1 + part2 + part3);
       if (!response.ok) throw new Error("Ошибка лимитов ключа или сети");
 
