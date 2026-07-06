@@ -92,15 +92,20 @@
       border-radius: 8px; padding: 10px; margin-bottom: 15px;
       text-align: center; font-size: 14px; font-weight: bold; color: #fff;
     }
-        .sand-glass {
+            .radar-loader {
       display: inline-block;
-      animation: flipGlass 2s linear infinite;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 85, 0, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--winline-orange);
+      animation: spinRadar 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+      box-shadow: 0 0 8px var(--winline-orange);
     }
-    @keyframes flipGlass {
-      0% { transform: rotate(0deg); }
-      45% { transform: rotate(0deg); }
-      55% { transform: rotate(180deg); }
-      100% { transform: rotate(180deg); }
+    @keyframes spinRadar {
+      to { transform: rotate(360deg); }
     }
     .super-bots-hub {
       display: flex; flex-wrap: wrap; gap: 6px; background: var(--panel-bg);
@@ -204,7 +209,7 @@
   }
 
   async function buildHugeWinlineLine() {
-    document.getElementById('live-counter').innerHTML = '<span class="sand-glass">⏳</span> Подключение к серверам The Odds API... Сканирование линии...';
+    document.getElementById('live-counter').innerHTML = '<div class="radar-loader"></div> Подключение к серверам ИИ... Сканирование и фильтрация линии...';
     try {
       const targetDate = new Date();
       targetDate.setHours(targetDate.getHours() + 48);
