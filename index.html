@@ -204,7 +204,7 @@
         try {
             // Запрашиваем все сегодняшние и live матчи из регионов Европы/СНГ (включая маркеты исходов)
       const siteUrl = 'https://' + 'api.' + 'the-odds-api.com';
-      const techPath = '/v4/odds/?apiKey=' + API_KEY + '&regions=eu&markets=h2h&oddsFormat=decimal';
+      const techPath = '/v4/sports/soccer_live/odds/?apiKey=' + API_KEY + '&regions=eu&markets=h2h&oddsFormat=decimal';
       const response = await fetch(siteUrl + techPath);
 
 
