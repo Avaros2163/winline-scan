@@ -226,7 +226,7 @@
 
         let valP1 = "—", valX = "—", valP2 = "—";
         if (match.bookmakers && match.bookmakers.length > 0) {
-          const firstBookie = match.bookmakers[0];
+        const firstBookie = match.bookmakers && match.bookmakers.length > 0 ? match.bookmakers[0] : null;
           if (firstBookie && firstBookie.markets && firstBookie.markets.length > 0) {
           const market = firstBookie.markets.find(m => m.key === "h2h");
             if (market && market.outcomes) {
