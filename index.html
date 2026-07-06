@@ -92,6 +92,16 @@
       border-radius: 8px; padding: 10px; margin-bottom: 15px;
       text-align: center; font-size: 14px; font-weight: bold; color: #fff;
     }
+        .sand-glass {
+      display: inline-block;
+      animation: flipGlass 2s linear infinite;
+    }
+    @keyframes flipGlass {
+      0% { transform: rotate(0deg); }
+      45% { transform: rotate(0deg); }
+      55% { transform: rotate(180deg); }
+      100% { transform: rotate(180deg); }
+    }
     .super-bots-hub {
       display: flex; flex-wrap: wrap; gap: 6px; background: var(--panel-bg);
       padding: 10px; border-radius: 8px; margin-bottom: 20px;
@@ -194,7 +204,7 @@
   }
 
   async function buildHugeWinlineLine() {
-    document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
+    document.getElementById('live-counter').innerHTML = '<span class="sand-glass">⏳</span> Подключение к серверам The Odds API... Сканирование линии...';
     try {
       const targetDate = new Date();
       targetDate.setHours(targetDate.getHours() + 48);
