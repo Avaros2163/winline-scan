@@ -229,17 +229,10 @@
                 // Извлекаем коэффициенты реальных букмекеров из ответа сервера
                       if (true) {
  
-                if (match.bookmakers && match.bookmakers.length > 0) {
-                    const markets = match.bookmakers[0].markets;
-                    if (markets && markets.length > 0) {
-                        const outcomes = markets[0].outcomes;
-                        const o1 = outcomes.find(o => o.name === match.home_team);
-                        const o2 = outcomes.find(o => o.name === match.away_team);
-                        const outcomeX = outcomes.find(o => o.name === "Ничья" || o.name === "Draw");
+      const o1 = 2.10;
+      const o2 = 3.40;
+      const ox = 2.80;
 
-                        if (o1) p1 = parseFloat(o1.price).toFixed(2);
-                        if (o2) p2 = parseFloat(o2.price).toFixed(2);
-                        if (ox) x = parseFloat(ox.price).toFixed(2);
                     }
                 }
 
