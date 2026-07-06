@@ -195,7 +195,8 @@
 
   async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
-    try {      const targetDate = new Date();
+    try {
+      const targetDate = new Date();
       targetDate.setHours(targetDate.getHours() + 48);
       const timeIso = targetDate.toISOString().split('.')[0] + 'Z';
 
@@ -203,14 +204,12 @@
       const part2 = 'the-odds-api.com' + '/v4/sports/upcoming/odds/';
       const part3 = '?apiKey=' + API_KEY + '&regions=eu,au&markets=h2h&oddsFormat=decimal&commenceTimeTo=' + timeIso;
       const response = await fetch(part1 + part2 + part3);
-
-      
       if (!response.ok) throw new Error("Ошибка лимитов ключа или сети");
 
       const data = await response.json();
       const list = [];
 
-                  data.forEach((match, idx) => {
+      data.forEach((match, idx) => {
         let sportType = "football";
         const title = match.sport_key.toLowerCase();
         const group = match.sport_title.toLowerCase();
@@ -221,13 +220,11 @@
           sportType = "hockey";
         }
 
-
-
         const valP1 = 2.10;
         const valP2 = 3.40;
         const valX = 2.80;
 
-                const matchDate = new Date(match.commence_time);
+        const matchDate = new Date(match.commence_time);
         const dayStr = String(matchDate.getDate()).padStart(2, '0') + "." + String(matchDate.getMonth() + 1).padStart(2, '0');
         const timeStr = dayStr + " " + String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
         const timestamp = matchDate.getTime();
@@ -236,11 +233,11 @@
         let raw = "[ИИ-КОНСЕНСУС]: Анализ линии пройден успешно.";
         let verdict = "<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Победитель определится в основное время";
 
-                list.push({
+        list.push({
           id: idx + 1,
           sport: sportType,
           time: timeStr,
-          rawTimestamp: timestamp, // <-- ДОБАВИТЬ ЭТУ СТРОКУ
+          rawTimestamp: timestamp,
           league: match.sport_title,
           home: match.home_team,
           away: match.away_team,
@@ -263,15 +260,12 @@
       console.error(err);
     }
   }
-    const compareTimeSmart = (a, b) => a.rawTimestamp - b.rawTimestamp;
-    const [hA, mA] = a.time.split(':').map(Number);
-    const [hB, mB] = b.time.split(':').map(Number);
-    return (hA * 60 + mA) - (hB * 60 + mB);
-  };
+
+  const compareTimeSmart = (a, b) => a.rawTimestamp - b.rawTimestamp;
 
   function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
 
-    function processAndRender() {
+  function processAndRender() {
     let filtered = globalCachedMatches;
     if (currentSearchQuery !== "") { 
       filtered = globalCachedMatches.filter(m =>
