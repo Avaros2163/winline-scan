@@ -280,7 +280,7 @@
     }
     let football = filtered.filter(m => m.sport === "football"), tennis = filtered.filter(m => m.sport === "tennis"), hockey = filtered.filter(m => m.sport === "hockey");
     const getTitle = (name, arr) => `${name} (Найдено: ${arr.length} | <span class="title-good">${arr.filter(m=>m.status==="status-good").length}</span>)`;
-    const sortArr = (arr) => [...arr].sort(compareTimeSmart);
+    const sortArr = (arr) => [...arr].sort((a, b) => a.rawTimestamp - b.rawTimestamp);
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
     
