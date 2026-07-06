@@ -198,8 +198,7 @@
         else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
     }
 
-        // Полностью вырезан симулятор! Функция делает настоящий fetch-запрос к серверам
-  async function buildHugeWinlineLine() {
+          async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
     try {
       const part1 = 'https://' + 'api.';
@@ -214,16 +213,15 @@
       data.forEach((match, idx) => {
         let sportType = "football";
         const group = match.sport_title.toLowerCase();
+        
         if (group.includes("tennis")) sportType = "tennis";
         else if (group.includes("hockey")) sportType = "hockey";
-        
+        // Фильтр футбола полностью удален — теперь сайт пропустит абсолютно всё!
 
-        // Фиксированные демо-коэффициенты
         const valP1 = 2.10;
         const valP2 = 3.40;
         const valX = 2.80;
 
-        // Время матча
         const matchDate = new Date(match.commence_time);
         const timeStr = String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
 
@@ -238,7 +236,7 @@
           league: match.sport_title,
           home: match.home_team,
           away: match.away_team,
-          odds: { P1: valP1, X: sportType !== "tennis" ? valX : null, P2: valP2 },
+          odds: { P1: valP1, X: valX, P2: valP2 },
           weather: "По данным стадиона: Норма",
           injuries: "Проверка LIVE-протокола завершена",
           dropOdds: "Кэфы стабильны",
@@ -258,10 +256,6 @@
     }
   }
 
-    const compareTimeSmart = (a, b) => {
-        const [hA, mA] = a.time.split(':').map(Number);
-        const [hB, mB] = b.time.split(':').map(Number);
-        return (hA * 60 + mA) - (hB * 60 + mB);
     };
 
     function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
