@@ -214,11 +214,15 @@
         const title = match.sport_key.toLowerCase();
         const group = match.sport_title.toLowerCase();
         
-        if (title.includes("tennis") || group.includes("tennis")) {
-          sportType = "tennis";
-        } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
-          sportType = "hockey";
-        }
+             if (title.includes("tennis") || group.includes("tennis")) {
+       sportType = "tennis";
+     } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
+       sportType = "hockey";
+     } else if (title.includes("soccer") || title.includes("football") || group.includes("soccer") || group.includes("football")) {
+       sportType = "football";
+     } else {
+       return; // Этот жесткий сброс мгновенно удалит крикет и лишний мусор
+     }
 
         const valP1 = 2.10;
         const valP2 = 3.40;
