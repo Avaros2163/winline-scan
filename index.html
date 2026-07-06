@@ -224,9 +224,19 @@
        return; // Этот жесткий сброс мгновенно удалит крикет и лишний мусор
      }
 
-        const valP1 = 2.10;
-        const valP2 = 3.40;
-        const valX = 2.80;
+                let valP1 = "—", valX = "—", valP2 = "—";
+        if (match.bookmakers && match.bookmakers.length > 0) {
+          const market = match.bookmakers[0].markets?.find(m => m.key === "h2h");
+          if (market && market.outcomes) {
+            const o1 = market.outcomes.find(o => o.name === match.home_team);
+            const o2 = market.outcomes.find(o => o.name === match.away_team);
+            const ox = market.outcomes.find(o => o.name === "Draw" || o.name === "Ничья");
+            
+            if (o1) valP1 = parseFloat(o1.price).toFixed(2);
+            if (o2) valP2 = parseFloat(o2.price).toFixed(2);
+            if (ox) valX = parseFloat(ox.price).toFixed(2);
+          }
+        }
 
         const matchDate = new Date(match.commence_time);
         const dayStr = String(matchDate.getDate()).padStart(2, '0') + "." + String(matchDate.getMonth() + 1).padStart(2, '0');
