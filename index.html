@@ -276,7 +276,7 @@
     }
     let football = filtered.filter(m => m.sport === "football"), tennis = filtered.filter(m => m.sport === "tennis"), hockey = filtered.filter(m => m.sport === "hockey");
     const getTitle = (name, arr) => `${name} (Найдено: ${arr.length} | <span class="title-good">${arr.filter(m=>m.status==="status-good").length}</span>)`;
-    const sortArr = (arr) => isFilterActive ? [...arr.filter(m=>m.status==="status-good").sort(compareTimeSmart), ...arr.filter(m=>m.status==="status-bad").sort(compareTimeSmart)] : [...arr].sort(compareTimeSmart);
+    const sortArr = (arr) => [...arr].sort(compareTimeSmart);
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
     
