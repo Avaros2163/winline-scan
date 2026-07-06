@@ -176,7 +176,7 @@
     <button class="filter-btn" id="smart-filter-btn" onclick="toggleSmartFilter()"><span> ПОДНЯТЬ ОДОБРЕННЫЕ МАТЧИ НАВЕРХ</span></button>
     <button class="refresh-btn" id="refresh-btn-timer" onclick="refreshLiveLine()"><span id="refresh-btn-text"> ОБНОВИТЬ (Авто через 30:00)</span></button>
   </div >
-  <div class="live-counter-panel" id="live-counter">Загрузка настоящих матчей через internet...</div>
+  <div class="live-counter-panel" id="live-counter">Загрузка настоящих матчей через интернет...</div>
   <div class="super-bots-hub" id="bots-hub"></div>
   <div class="sports-grid" id="sports-container"></div>
 </div>
@@ -198,7 +198,7 @@
     try {
       const targetDate = new Date();
       targetDate.setHours(targetDate.getHours() + 48);
-      const timeIso = targetDate.toISOString().split('.')[0] + 'Z';
+      const timeIso = targetDate.toISOString().split('.') + 'Z';
 
       const part1 = 'https://' + 'api.';
       const part2 = 'the-odds-api.com' + '/v4/sports/upcoming/odds/';
@@ -214,24 +214,23 @@
         const title = match.sport_key.toLowerCase();
         const group = match.sport_title.toLowerCase();
         
-             if (title.includes("tennis") || group.includes("tennis")) {
-       sportType = "tennis";
-     } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
-       sportType = "hockey";
-     } else if (title.includes("soccer") || title.includes("football") || group.includes("soccer") || group.includes("football")) {
-       sportType = "football";
-     } else {
-       return; // Этот жесткий сброс мгновенно удалит крикет и лишний мусор
-     }
+        if (title.includes("tennis") || group.includes("tennis")) {
+          sportType = "tennis";
+        } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
+          sportType = "hockey";
+        } else if (title.includes("soccer") || title.includes("football") || group.includes("soccer") || group.includes("football")) {
+          sportType = "football";
+        } else {
+          return;
+        }
 
-                let valP1 = "—", valX = "—", valP2 = "—";
+        let valP1 = "—", valX = "—", valP2 = "—";
         if (match.bookmakers && match.bookmakers.length > 0) {
           const market = match.bookmakers[0].markets?.find(m => m.key === "h2h");
           if (market && market.outcomes) {
             const o1 = market.outcomes.find(o => o.name === match.home_team);
             const o2 = market.outcomes.find(o => o.name === match.away_team);
             const ox = market.outcomes.find(o => o.name === "Draw" || o.name === "Ничья");
-            
             if (o1) valP1 = parseFloat(o1.price).toFixed(2);
             if (o2) valP2 = parseFloat(o2.price).toFixed(2);
             if (ox) valX = parseFloat(ox.price).toFixed(2);
@@ -274,58 +273,27 @@
       console.error(err);
     }
   }
-
   const compareTimeSmart = (a, b) => a.rawTimestamp - b.rawTimestamp;
 
   function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
 
-    function processAndRender() {
-    // Функция автоматического перевода любого текста на русский язык на лету
+  function processAndRender() {
     const translateToRu = (text) => {
       if (!text) return "";
-      
-      // Сначала заменяем базовые спортивные термины
-      let result = text
-        .replace(/Wimbledon/gi, "Уимблдон")
-        .replace(/Championship/gi, "Чемпионат")
-        .replace(/League/gi, "Лига")
-        .replace(/Cup/gi, "Кубок")
-        .replace(/Division/gi, "Дивизион")
-        .replace(/Sweden/gi, "Швеция")
-        .replace(/Allsvenskan/gi, "Аллсвенскан")
-        .replace(/Draw/gi, "Ничья")
-        .replace(/ATP/g, "АТП")
-        .replace(/WTA/g, "ВТА");
-
-      // Карта звуков для автоматической транслитерации любых имен и названий
-      const chars = {
-        'ch': 'ч', 'sh': 'ш', 'shch': 'щ', 'kh': 'х', 'zh': 'ж', 'ts': 'ц', 'yu': 'ю', 'ya': 'я',
-        'ph': 'ф', 'th': 'т', 'ee': 'и', 'oo': 'у', 'ai': 'ай', 'ei': 'ей', 'ck': 'к',
-        'a': 'а', 'b': 'б', 'v': 'в', 'g': 'г', 'd': 'д', 'e': 'е', 'z': 'з', 'i': 'и', 'j': 'й',
-        'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 'r': 'р', 's': 'с', 't': 'т',
-        'u': 'у', 'f': 'ф', 'h': 'х', 'c': 'к', 'q': 'к', 'w': 'в', 'x': 'кс', 'y': 'и'
+      let t = text.trim();
+      const dict = {
+        "Spain": "Испания", "Portugal": "Португалия", "Sweden": "Швеция", "Germany": "Германия",
+        "France": "Франция", "Italy": "Италия", "England": "Англия", "Netherlands": "Нидерланды",
+        "Wimbledon": "Уимблдон", "Allsvenskan": "Аллсвенскан", "Championship": "Чемпионат",
+        "League": "Лига", "Cup": "Кубок", "Draw": "Ничья", "UEFA": "УЕФА",
+        "Grigor Dimitrov": "Григор Димитров", "Arthur Fery": "Артур Фери",
+        "Taylor Fritz": "Тейлор Фритц", "Alexander Bublik": "Александр Бублик",
+        "BK Hacken": "Хеккен", "Djurgardens IF": "Юргорден",
+        "IF Brommapojkarna": "Броммапойкарна", "GAIS": "ГАИС",
+        "USA": "США", "Canada": "Канада", "Brazil": "Бразилия", "Argentina": "Аргентина"
       };
-
-      // Переводим по буквам и слогам, сохраняя заглавные буквы в начале слов
-      return result.split(' ').map(word => {
-        let lowerWord = word.toLowerCase();
-        
-        // Заменяем сложные сочетания букв
-        ['shch', 'ch', 'sh', 'kh', 'zh', 'ts', 'yu', 'ya', 'ph', 'th', 'ee', 'oo', 'ai', 'ei', 'ck'].forEach(key => {
-          const reg = new RegExp(key, 'g');
-          lowerWord = lowerWord.replace(reg, chars[key]);
-        });
-        
-        // Заменяем одиночные буквы
-        let translated = '';
-        for (let i = 0; i < lowerWord.length; i++) {
-          const c = lowerWord[i];
-          translated += chars[c] || c;
-        }
-
-        // Возвращаем красивую заглавную букву в начале каждого слова
-        return translated.charAt(0).toUpperCase() + translated.slice(1);
-      }).join(' ');
+      if (dict[t]) return dict[t];
+      return t.replace(/Wimbledon/gi, "Уимблдон").replace(/League/gi, "Лига").replace(/Sweden/gi, "Швеция");
     };
 
     let filtered = globalCachedMatches;
@@ -338,7 +306,7 @@
     }
     let football = filtered.filter(m => m.sport === "football"), tennis = filtered.filter(m => m.sport === "tennis"), hockey = filtered.filter(m => m.sport === "hockey");
     const getTitle = (name, arr) => `${name} (Найдено: ${arr.length} | <span class="title-good">${arr.filter(m=>m.status==="status-good").length}</span>)`;
-    const sortArr = (arr) => [...arr].sort((a, b) => a.rawTimestamp - b.rawTimestamp);
+    const sortArr = (arr) => [...arr].sort(compareTimeSmart);
     
     football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
     
@@ -357,14 +325,13 @@
         </div>
         <div class="odds-line">
           <div class="odds-box"><span>П1</span><strong>${m.odds.P1}</strong></div>
-          ${m.odds.X ? `<div class="odds-box"><span>X</span><strong>${m.odds.X}</strong></div>` : ''}
+          ${m.odds.X !== "—" ? `<div class="odds-box"><span>X</span><strong>${m.odds.X}</strong></div>` : ''}
           <div class="odds-box"><span>П2</span><strong>${m.odds.P2}</strong></div>
         </div>
         <div class="bot-verdict">${m.verdict}</div>
         <button class="share-card-btn" id="sh-${m.id}" onclick="copyMatch(${m.id})">Поделиться</button>
       </div>
     `).join('');
-
     document.getElementById('sports-container').innerHTML = `
       <div class="sport-column col-football"><div class="column-title"><span class="sport-name">${getTitle(" Футбол", football)}</span></div>${renderCol(football)}</div>
       <div class="sport-column col-tennis"><div class="column-title"><span class="sport-name">${getTitle(" Теннис", tennis)}</span></div>${renderCol(tennis)}</div>
@@ -374,7 +341,7 @@
 
   function copyMatch(id) {
     const m = globalCachedMatches.find(x => x.id === id); if (!m) return;
-    const o = m.odds.X ? "П1: " + m.odds.P1 + " | X: " + m.odds.X + " | П2: " + m.odds.P2 : "П1: " + m.odds.P1 + " | П2: " + m.odds.P2;
+    const o = m.odds.X !== "—" ? "П1: " + m.odds.P1 + " | X: " + m.odds.X + " | П2: " + m.odds.P2 : "П1: " + m.odds.P1 + " | П2: " + m.odds.P2;
     const txt = " WINLINE REAL LIVE " + m.home + " — " + m.away + " Кэфы: " + o + " ВЕРДИКТ: " + m.rawVerdictText;
     navigator.clipboard.writeText(txt).then(() => {
       const b = document.getElementById("sh-" + id); b.classList.add('copied'); b.innerText = 'Скопировано!';
