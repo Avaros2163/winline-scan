@@ -279,7 +279,55 @@
 
   function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
 
-  function processAndRender() {
+    function processAndRender() {
+    // Функция автоматического перевода любого текста на русский язык на лету
+    const translateToRu = (text) => {
+      if (!text) return "";
+      
+      // Сначала заменяем базовые спортивные термины
+      let result = text
+        .replace(/Wimbledon/gi, "Уимблдон")
+        .replace(/Championship/gi, "Чемпионат")
+        .replace(/League/gi, "Лига")
+        .replace(/Cup/gi, "Кубок")
+        .replace(/Division/gi, "Дивизион")
+        .replace(/Sweden/gi, "Швеция")
+        .replace(/Allsvenskan/gi, "Аллсвенскан")
+        .replace(/Draw/gi, "Ничья")
+        .replace(/ATP/g, "АТП")
+        .replace(/WTA/g, "ВТА");
+
+      // Карта звуков для автоматической транслитерации любых имен и названий
+      const chars = {
+        'ch': 'ч', 'sh': 'ш', 'shch': 'щ', 'kh': 'х', 'zh': 'ж', 'ts': 'ц', 'yu': 'ю', 'ya': 'я',
+        'ph': 'ф', 'th': 'т', 'ee': 'и', 'oo': 'у', 'ai': 'ай', 'ei': 'ей', 'ck': 'к',
+        'a': 'а', 'b': 'б', 'v': 'в', 'g': 'г', 'd': 'д', 'e': 'е', 'z': 'з', 'i': 'и', 'j': 'й',
+        'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 'r': 'р', 's': 'с', 't': 'т',
+        'u': 'у', 'f': 'ф', 'h': 'х', 'c': 'к', 'q': 'к', 'w': 'в', 'x': 'кс', 'y': 'и'
+      };
+
+      // Переводим по буквам и слогам, сохраняя заглавные буквы в начале слов
+      return result.split(' ').map(word => {
+        let lowerWord = word.toLowerCase();
+        
+        // Заменяем сложные сочетания букв
+        ['shch', 'ch', 'sh', 'kh', 'zh', 'ts', 'yu', 'ya', 'ph', 'th', 'ee', 'oo', 'ai', 'ei', 'ck'].forEach(key => {
+          const reg = new RegExp(key, 'g');
+          lowerWord = lowerWord.replace(reg, chars[key]);
+        });
+        
+        // Заменяем одиночные буквы
+        let translated = '';
+        for (let i = 0; i < lowerWord.length; i++) {
+          const c = lowerWord[i];
+          translated += chars[c] || c;
+        }
+
+        // Возвращаем красивую заглавную букву в начале каждого слова
+        return translated.charAt(0).toUpperCase() + translated.slice(1);
+      }).join(' ');
+    };
+
     let filtered = globalCachedMatches;
     if (currentSearchQuery !== "") { 
       filtered = globalCachedMatches.filter(m =>
@@ -298,8 +346,8 @@
     
     const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей пока нет</div>' : list.map(m => `
       <div class="match-card ${m.status}">
-        <div class="match-header"><span class="league-title">${m.league}</span><span class="time-badge">${m.time}</span></div>
-        <div class="teams">${m.home} — ${m.away}</div>
+        <div class="match-header"><span class="league-title">${translateToRu(m.league)}</span><span class="time-badge">${m.time}</span></div>
+        <div class="teams">${translateToRu(m.home)} — ${translateToRu(m.away)}</div>
         <div class="factor-box">
           <div class="factor-row"><span class="factor-label"> Условия:</span><span class="factor-value">${m.weather}</span></div>
           <div class="factor-row"><span class="factor-label"> Потери:</span><span class="factor-value">${m.injuries}</span></div>
