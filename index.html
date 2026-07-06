@@ -245,9 +245,18 @@
         const timeStr = dayStr + " " + String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
         const timestamp = matchDate.getTime();
 
-        let status = "status-good";
-        let raw = "[ИИ-КОНСЕНСУС]: Анализ линии пройден успешно.";
-        let verdict = "<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Победитель определится в основное время";
+                let status = "status-good", raw = "[ИИ-АНАЛИЗ]: Котировки стабильны.", verdict = "Анализ события...";
+        if (valP1 !== "—" && valP2 !== "—") {
+          if (parseFloat(valP1) < 1.70) {
+            verdict = `<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Уверенная победа первой команды`;
+          } else if (parseFloat(valP2) < 1.70) {
+            verdict = `<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Уверенная победа второй команды`;
+          } else {
+            status = "status-bad";
+            raw = "[ИИ-ВНИМАНИЕ]: Высокие риски. Равные кэфы.";
+            verdict = `<span class='hot-tag'>ОЖИДАНИЕ:</span> Плотная игра фаворитов, возможен ТМ`;
+          }
+        }
 
         list.push({
           id: idx + 1,
