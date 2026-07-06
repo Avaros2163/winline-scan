@@ -210,7 +210,7 @@
 
   async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = '<div class="radar-loader"></div> Подключение к серверам ИИ... Сканирование и фильтрация линии...';
-    try {
+        try {
       const targetDate = new Date();
       targetDate.setHours(targetDate.getHours() + 48);
       const timeIso = targetDate.toISOString().split('.') + 'Z';
