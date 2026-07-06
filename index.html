@@ -227,17 +227,20 @@
         const valP2 = 3.40;
         const valX = 2.80;
 
-        const matchDate = new Date(match.commence_time);
-        const timeStr = String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
+                const matchDate = new Date(match.commence_time);
+        const dayStr = String(matchDate.getDate()).padStart(2, '0') + "." + String(matchDate.getMonth() + 1).padStart(2, '0');
+        const timeStr = dayStr + " " + String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
+        const timestamp = matchDate.getTime();
 
         let status = "status-good";
         let raw = "[ИИ-КОНСЕНСУС]: Анализ линии пройден успешно.";
         let verdict = "<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Победитель определится в основное время";
 
-        list.push({
+                list.push({
           id: idx + 1,
           sport: sportType,
           time: timeStr,
+          rawTimestamp: timestamp, // <-- ДОБАВИТЬ ЭТУ СТРОКУ
           league: match.sport_title,
           home: match.home_team,
           away: match.away_team,
@@ -260,7 +263,7 @@
       console.error(err);
     }
   }
-  const compareTimeSmart = (a, b) => {
+    const compareTimeSmart = (a, b) => a.rawTimestamp - b.rawTimestamp;
     const [hA, mA] = a.time.split(':').map(Number);
     const [hB, mB] = b.time.split(':').map(Number);
     return (hA * 60 + mA) - (hB * 60 + mB);
