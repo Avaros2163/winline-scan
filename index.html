@@ -227,7 +227,8 @@
                 else if (!group.includes("soccer") && !group.includes("football")) return; // Берем только футбол, теннис, хоккей
 
                 // Извлекаем коэффициенты реальных букмекеров из ответа сервера
-                let p1 = "2.10", x = "3.40", p2 = "2.80"; 
+                      if (true) {
+ 
                 if (match.bookmakers && match.bookmakers.length > 0) {
                     const markets = match.bookmakers[0].markets;
                     if (markets && markets.length > 0) {
