@@ -303,7 +303,7 @@
         <div class="bot-verdict">${m.verdict}</div>
         <button class="share-card-btn" id="sh-${m.id}" onclick="copyMatch(${m.id})">Поделиться</button>
       </div>
-    `).join('');
+        document.getElementById('live-counter').innerHTML = ' ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ' + filtered.length + ' активных матчей на сегодня и завтра';
     document.getElementById('sports-container').innerHTML = `
       <div class="sport-column col-football"><div class="column-title"><span class="sport-name">${getTitle(" Футбол", football)}</span></div>${renderCol(football)}</div>
       <div class="sport-column col-tennis"><div class="column-title"><span class="sport-name">${getTitle(" Теннис", tennis)}</span></div>${renderCol(tennis)}</div>
