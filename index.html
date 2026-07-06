@@ -1,204 +1,199 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winline LIVE Сканер: Настоящий ИИ-Консилиум</title>
-    <style>
-        :root {
-            --bg-color: #060709;
-            --card-bg: #10121a;
-            --panel-bg: #0d0f15;
-            --mini-bot-bg: #161922;
-            --winline-orange: #ff5500;
-            --text-color: #cbd5e1;
-            --text-title: #ffffff;
-            --factor-box: #151821;
-            --factor-border: #202637;
-            --green: #2ecc71;
-            --red: #e74c3c;
-            --blue: #3498db;
-            --purple: #a855f7;
-            --yellow: #f1c40f;
-        }
-        [data-theme="light"] {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --panel-bg: #e2e8f0;
-            --mini-bot-bg: #f8fafc;
-            --text-color: #334155;
-            --text-title: #0f172a;
-            --factor-box: #f1f5f9;
-            --factor-border: #cbd5e1;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 15px;
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .container { max-width: 1900px; margin: 0 auto; }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--winline-orange);
-            padding-bottom: 12px;
-            position: relative;
-        }
-        h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 26px; }
-        .brand { color: var(--winline-orange); font-weight: bold; }
-        
-        .theme-toggle-btn {
-            position: absolute; right: 10px; top: 10px; background: var(--winline-orange);
-            color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
-            font-size: 12px; font-weight: bold; cursor: pointer;
-        }
-        .action-bar { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 15px; 
-            margin-bottom: 15px; 
-            flex-wrap: wrap; 
-            background: var(--panel-bg);
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid var(--factor-border);
-            box-sizing: border-box;
-        }
-        .search-input {
-            width: 320px; background: #11141d; border: 2px solid #475569; color: #fff;
-            padding: 8px 15px; font-size: 14px; border-radius: 6px; outline: none; 
-            transition: all 0.2s ease; box-sizing: border-box;
-        }
-        .search-input:focus { border-color: var(--winline-orange); box-shadow: 0 0 8px rgba(255, 85, 0, 0.2); }
-
-        .filter-btn {
-            background: #11141d; border: 2px solid #475569; color: #fff;
-            padding: 8px 16px; font-size: 13px; font-weight: bold; border-radius: 6px;
-            cursor: pointer; display: flex; align-items: center; gap: 6px; height: 38px;
-            margin: 0 auto; box-sizing: border-box;
-        }
-        .filter-btn.active { border-color: var(--green); background: #0c1f14; color: var(--green); }
-
-        .refresh-btn {
-            background: var(--winline-orange); border: 2px solid var(--winline-orange); color: #fff;
-            padding: 8px 15px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; 
-            width: 320px; justify-content: center; display: flex; align-items: center; gap: 6px; height: 38px;
-            box-sizing: border-box;
-        }
-        .live-counter-panel {
-            background: #11141d; border: 1px solid var(--winline-orange);
-            border-radius: 8px; padding: 10px; margin-bottom: 15px;
-            text-align: center; font-size: 14px; font-weight: bold; color: #fff;
-        }
-        .super-bots-hub {
-            display: flex; flex-wrap: wrap; gap: 6px; background: var(--panel-bg);
-            padding: 10px; border-radius: 8px; margin-bottom: 20px;
-            border: 1px solid var(--factor-border); justify-content: center;
-        }
-        .mini-bot {
-            background: var(--mini-bot-bg); padding: 4px 10px; border-radius: 6px;
-            font-size: 11px; display: flex; align-items: center; gap: 6px; border: 1px solid var(--factor-border);
-        }
-        .bot-led { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); }
-        
-        .sports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        @media (max-width: 1400px) { .sports-grid { grid-template-columns: 1fr; } }
-        
-        .sport-column {
-            background: var(--panel-bg); border-radius: 12px; padding: 0 15px 15px 15px;
-            max-height: 80vh; overflow-y: auto; position: relative;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15); border-top: 4px solid #475569;
-        }
-        .sport-column::-webkit-scrollbar { width: 6px; }
-        .sport-column::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-        .sport-column.col-football { border-top-color: var(--blue); }
-        .sport-column.col-tennis { border-top-color: var(--yellow); }
-        .sport-column.col-hockey { border-top-color: #e67e22; }
-        .column-title { 
-            position: sticky; top: 0; z-index: 10; background: var(--panel-bg); padding: 15px 5px 12px 5px;
-            font-size: 12px; border-bottom: 1px solid var(--factor-border); margin-bottom: 15px; 
-            text-align: center; color: var(--text-title);
-        }
-        .sport-name { font-size: 18px; font-weight: 800; text-transform: uppercase; }
-        .title-good { color: var(--green); font-weight: bold; }
-        .title-bad { color: var(--red); font-weight: bold; }
-
-        .match-card {
-            background: var(--card-bg); padding: 12px 12px 12px 14px; margin-bottom: 15px;
-            border-left: 6px solid #475569; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease; border-radius: 8px;
-        }
-        .match-card.status-good { border-left-color: var(--green); }
-        .match-card.status-bad { border-left-color: var(--red); }
-        
-        .match-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 6px; }
-        .time-badge { color: var(--text-title); font-weight: bold; background: var(--bg-color); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--factor-border); }
-        .league-title { color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
-        .teams { font-size: 15px; font-weight: bold; color: var(--text-title); margin-bottom: 8px; }
-        
-        .factor-box { background: var(--factor-box); border: 1px solid var(--factor-border); padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; }
-        .factor-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
-        .factor-label { color: #64748b; }
-        .factor-value { color: var(--text-color); font-weight: 500; text-align: right; max-width: 63%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        
-        .odds-line { display: flex; gap: 4px; background: var(--factor-box); padding: 4px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; border: 1px solid var(--factor-border); }
-        .odds-box { flex: 1; text-align: center; }
-        .odds-box span { color: #64748b; display: block; font-size: 9px; }
-        .odds-box strong { color: var(--winline-orange); }
-        
-        .bot-verdict { 
-            font-size: 13px; line-height: 1.4; padding: 10px; border-radius: 6px; 
-            background: #151822; border: 1px solid var(--factor-border); margin-bottom: 10px; font-weight: 600;
-        }
-                  odds: { P1: valP1, X: sportType !== "tennis" ? valX : null, P2: valP2 }, 
-            border: 1px solid var(--green); color: #ffffff; background: linear-gradient(90deg, #0e2917, #151822);
-        }
-        .match-card.status-bad .bot-verdict { border: 1px solid rgba(231, 76, 60, 0.3); color: #94a3b8; background: #0d0f15; }
-        .bot-tag { font-weight: 800; text-transform: uppercase; font-size: 11px; display: block; margin-bottom: 2px; }
-        .match-card.status-good .bot-tag { color: var(--green); }
-        .match-card.status-bad .bot-tag { color: #64748b; }
-
-        .share-card-btn {
-            width: 100%; background: #1a1e29; border: 1px solid #334155; color: #94a3b8;
-            padding: 6px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: block; text-align: center;
-        }
-        .share-card-btn.copied { background: #0c1f14; border-color: var(--green); color: var(--green); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winline LIVE Сканер: Настоящий ИИ-Консилиум</title>
+  <style>
+    :root {
+      --bg-color: #060709;
+      --card-bg: #10121a;
+      --panel-bg: #0d0f15;
+      --mini-bot-bg: #161922;
+      --winline-orange: #ff5500;
+      --text-color: #cbd5e1;
+      --text-title: #ffffff;
+      --factor-box: #151821;
+      --factor-border: #202637;
+      --green: #2ecc71;
+      --red: #e74c3c;
+      --blue: #3498db;
+      --purple: #a855f7;
+      --yellow: #f1c40f;
+    }
+    [data-theme="light"] {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --panel-bg: #e2e8f0;
+      --mini-bot-bg: #f8fafc;
+      --text-color: #334155;
+      --text-title: #0f172a;
+      --factor-box: #f1f5f9;
+      --factor-border: #cbd5e1;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 15px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .container { max-width: 1900px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--winline-orange);
+      padding-bottom: 12px;
+      position: relative;
+    }
+    h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 26px; }
+    .brand { color: var(--winline-orange); font-weight: bold; }
+    
+    .theme-toggle-btn {
+      position: absolute; right: 10px; top: 10px; background: var(--winline-orange);
+      color: #fff; border: none; padding: 8px 14px; border-radius: 6px;
+      font-size: 12px; font-weight: bold; cursor: pointer;
+    }
+    .action-bar { 
+      display: flex; 
+      justify-content: space-between;
+      align-items: center; 
+      gap: 15px; 
+      margin-bottom: 15px; 
+      flex-wrap: wrap; 
+      background: var(--panel-bg);
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--factor-border);
+      box-sizing: border-box;
+    }
+    .search-input {
+      width: 320px; background: #11141d; border: 2px solid #475569; color: #fff;
+      padding: 8px 15px; font-size: 14px; border-radius: 6px; outline: none; 
+      transition: all 0.2s ease; box-sizing: border-box;
+    }
+    .search-input:focus { border-color: var(--winline-orange); box-shadow: 0 0 8px rgba(255, 85, 0, 0.2); }
+    .filter-btn {
+      background: #11141d; border: 2px solid #475569; color: #fff;
+      padding: 8px 16px; font-size: 13px; font-weight: bold; border-radius: 6px;
+      cursor: pointer; display: flex; align-items: center; gap: 6px; height: 38px;
+      margin: 0 auto; box-sizing: border-box;
+    }
+    .filter-btn.active { border-color: var(--green); background: #0c1f14; color: var(--green); }
+    .refresh-btn {
+      background: var(--winline-orange); border: 2px solid var(--winline-orange); color: #fff;
+      padding: 8px 15px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; 
+      width: 320px; justify-content: center; display: flex; align-items: center; gap: 6px; height: 38px;
+      box-sizing: border-box;
+    }
+    .live-counter-panel {
+      background: #11141d; border: 1px solid var(--winline-orange);
+      border-radius: 8px; padding: 10px; margin-bottom: 15px;
+      text-align: center; font-size: 14px; font-weight: bold; color: #fff;
+    }
+    .super-bots-hub {
+      display: flex; flex-wrap: wrap; gap: 6px; background: var(--panel-bg);
+      padding: 10px; border-radius: 8px; margin-bottom: 20px;
+      border: 1px solid var(--factor-border); justify-content: center;
+    }
+    .mini-bot {
+      background: var(--mini-bot-bg); padding: 4px 10px; border-radius: 6px;
+      font-size: 11px; display: flex; align-items: center; gap: 6px; border: 1px solid var(--factor-border);
+    }
+    .bot-led { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); }
+    
+    .sports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 1400px) { .sports-grid { grid-template-columns: 1fr; } }
+    
+    .sport-column {
+      background: var(--panel-bg); border-radius: 12px; padding: 0 15px 15px 15px;
+      max-height: 80vh; overflow-y: auto; position: relative;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15); border-top: 4px solid #475569;
+    }
+    .sport-column::-webkit-scrollbar { width: 6px; }
+    .sport-column::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    .sport-column.col-football { border-top-color: var(--blue); }
+    .sport-column.col-tennis { border-top-color: var(--yellow); }
+    .sport-column.col-hockey { border-top-color: #e67e22; }
+    .column-title { 
+      position: sticky; top: 0; z-index: 10; background: var(--panel-bg); padding: 15px 5px 12px 5px;
+      font-size: 12px; border-bottom: 1px solid var(--factor-border); margin-bottom: 15px; 
+      text-align: center; color: var(--text-title);
+    }
+    .sport-name { font-size: 18px; font-weight: 800; text-transform: uppercase; }
+    .title-good { color: var(--green); font-weight: bold; }
+    .title-bad { color: var(--red); font-weight: bold; }
+    .match-card {
+      background: var(--card-bg); padding: 12px 12px 12px 14px; margin-bottom: 15px;
+      border-left: 6px solid #475569; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: all 0.3s ease; border-radius: 8px;
+    }
+    .match-card.status-good { border-left-color: var(--green); }
+    .match-card.status-bad { border-left-color: var(--red); }
+    
+    .match-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 6px; }
+    .time-badge { color: var(--text-title); font-weight: bold; background: var(--bg-color); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--factor-border); }
+    .league-title { color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+    .teams { font-size: 15px; font-weight: bold; color: var(--text-title); margin-bottom: 8px; }
+    
+    .factor-box { background: var(--factor-box); border: 1px solid var(--factor-border); padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; }
+    .factor-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+    .factor-label { color: #64748b; }
+    .factor-value { color: var(--text-color); font-weight: 500; text-align: right; max-width: 63%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    .odds-line { display: flex; gap: 4px; background: var(--factor-box); padding: 4px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; border: 1px solid var(--factor-border); }
+    .odds-box { flex: 1; text-align: center; }
+    .odds-box span { color: #64748b; display: block; font-size: 9px; }
+    .odds-box strong { color: var(--winline-orange); }
+    
+    .bot-verdict { 
+      font-size: 13px; line-height: 1.4; padding: 10px; border-radius: 6px; 
+      background: #151822; border: 1px solid var(--factor-border); margin-bottom: 10px; font-weight: 600;
+    }
+    .match-card.status-good .bot-verdict { 
+      border: 1px solid var(--green); color: #ffffff; background: linear-gradient(90deg, #0e2917, #151822);
+    }
+    .match-card.status-bad .bot-verdict { border: 1px solid rgba(231, 76, 60, 0.3); color: #94a3b8; background: #0d0f15; }
+    .bot-tag { font-weight: 800; text-transform: uppercase; font-size: 11px; display: block; margin-bottom: 2px; }
+    .match-card.status-good .bot-tag { color: var(--green); }
+    .match-card.status-bad .bot-tag { color: #64748b; }
+    .share-card-btn {
+      width: 100%; background: #1a1e29; border: 1px solid #334155; color: #94a3b8;
+      padding: 6px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; display: block; text-align: center;
+    }
+    .share-card-btn.copied { background: #0c1f14; border-color: var(--green); color: var(--green); }
+  </style>
 </head>
 <body>
 <div class="container">
-    <header>
-        <h1>Многофакторный LIVE-Фильтр Линии <span class="brand">WINLINE</span></h1>
-        <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">СВЕТЛАЯ ТЕМА</button>
-    </header>
-    <div class="action-bar">
-        <input type="text" class="search-input" id="match-search" oninput="handleSearch(this.value)" placeholder="🔍 Поиск реального матча...">
-        <button class="filter-btn" id="smart-filter-btn" onclick="toggleSmartFilter()"><span>⚡ ПОДНЯТЬ ОДОБРЕННЫЕ МАТЧИ НАВЕРХ</span></button>
-        <button class="refresh-btn" id="refresh-btn-timer" onclick="refreshLiveLine()"><span id="refresh-btn-text">🔄 ОБНОВИТЬ (Авто через 30:00)</span></button>
-    </div>
-    <div class="live-counter-panel" id="live-counter">Загрузка настоящих матчей через интернет...</div>
-    <div class="super-bots-hub" id="bots-hub"></div>
-    <div class="sports-grid" id="sports-container"></div>
+  <header>
+    <h1>Многофакторный LIVE-Фильтр Линии <span class="brand">WINLINE</span></h1>
+    <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">СВЕТЛАЯ ТЕМА</button>
+  </header>
+  <div class="action-bar">
+    <input type="text" class="search-input" id="match-search" oninput="handleSearch(this.value)" placeholder=" Поиск реального матча...">
+    <button class="filter-btn" id="smart-filter-btn" onclick="toggleSmartFilter()"><span> ПОДНЯТЬ ОДОБРЕННЫЕ МАТЧИ НАВЕРХ</span></button>
+    <button class="refresh-btn" id="refresh-btn-timer" onclick="refreshLiveLine()"><span id="refresh-btn-text"> ОБНОВИТЬ (Авто через 30:00)</span></button>
+  </div >
+  <div class="live-counter-panel" id="live-counter">Загрузка настоящих матчей через internet...</div>
+  <div class="super-bots-hub" id="bots-hub"></div>
+  <div class="sports-grid" id="sports-container"></div>
 </div>
 <script>
-    // НАСТОЯЩИЙ API-КЛЮЧ И ПОРТЫ ПОДКЛЮЧЕНЫ
-    const API_KEY = "53abda43b50cfbdb6561d6f17fefbae6";
-    let isFilterActive = false, globalCachedMatches = [], autoRefreshTimer = null, countdownInterval = null, secondsLeft = 1800, currentSearchQuery = "";
-    
-    const bots = ["PoissonMath v4.1", "ValueFinder", "TrendRadar", "InsiderRadar", "ArbitrageScan", "RefereeBot", "PsychoIndex", "DroppingOdds", "VolumeBot", "XG_Expected", "MotivationIndex", "PublicConsensus"];
-    document.getElementById('bots-hub').innerHTML = bots.map(b => `<div class="mini-bot"><div class="bot-led"></div>${b}</div>`).join('');
+  const API_KEY = "53abda43b50cfbdb6561d6f17fefbae6";
+  let isFilterActive = false, globalCachedMatches = [], autoRefreshTimer = null, countdownInterval = null, secondsLeft = 1800, currentSearchQuery = "";
+  
+  const bots = ["PoissonMath v4.1", "ValueFinder", "TrendRadar", "InsiderRadar", "ArbitrageScan", "RefereeBot", "PsychoIndex", "DroppingOdds", "VolumeBot", "XG_Expected", "MotivationIndex", "PublicConsensus"];
+  document.getElementById('bots-hub').innerHTML = bots.map(b => `<div class="mini-bot"><div class="bot-led"></div>${b}</div>`).join('');
+  
+  function toggleTheme() {
+    const d = document.documentElement, b = document.getElementById('theme-btn');
+    if (d.getAttribute('data-theme') === 'light') { d.removeAttribute('data-theme'); b.innerText = 'СВЕТЛАЯ ТЕМА'; }
+    else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
+  }
 
-    function toggleTheme() {
-        const d = document.documentElement, b = document.getElementById('theme-btn');
-        if (d.getAttribute('data-theme') === 'light') { d.removeAttribute('data-theme'); b.innerText = 'СВЕТЛАЯ ТЕМА'; }
-        else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
-    }
-
-          async function buildHugeWinlineLine() {
+  async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
     try {
       const part1 = 'https://' + 'api.';
@@ -213,10 +208,8 @@
       data.forEach((match, idx) => {
         let sportType = "football";
         const group = match.sport_title.toLowerCase();
-        
         if (group.includes("tennis")) sportType = "tennis";
         else if (group.includes("hockey")) sportType = "hockey";
-        // Фильтр футбола полностью удален — теперь сайт пропустит абсолютно всё!
 
         const valP1 = 2.10;
         const valP2 = 3.40;
@@ -255,81 +248,85 @@
       console.error(err);
     }
   }
+  const compareTimeSmart = (a, b) => {
+    const [hA, mA] = a.time.split(':').map(Number);
+    const [hB, mB] = b.time.split(':').map(Number);
+    return (hA * 60 + mA) - (hB * 60 + mB);
+  };
 
-    };
+  function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
 
-    function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
-
-    function processAndRender() {
-        let filtered = globalCachedMatches;
-        if (currentSearchQuery !== "") { 
-            filtered = globalCachedMatches.filter(m => m.home.toLowerCase().includes(currentSearchQuery) || m.away.toLowerCase().includes(currentSearchQuery) || m.league.toLowerCase().includes(currentSearchQuery)); 
-        }
-
-        let football = filtered.filter(m => m.sport === "football"), tennis = filtered.filter(m => m.sport === "tennis"), hockey = filtered.filter(m => m.sport === "hockey");
-        const getTitle = (name, arr) => `${name} (Найдено: ${arr.length} | <span class="title-good">👍 ${arr.filter(m=>m.status==="status-good").length}</span>)`;
-
-        const sortArr = (arr) => isFilterActive ? [...arr.filter(m=>m.status==="status-good").sort(compareTimeSmart), ...arr.filter(m=>m.status==="status-bad").sort(compareTimeSmart)] : [...arr].sort(compareTimeSmart);
-        football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
-
-        document.getElementById('live-counter').innerHTML = `🔥 ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ${filtered.length} ЖИВЫХ сегодняшних матчей из базы данных`;
-
-        const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей в LIVE пока нет</div>' : list.map(m => `
-            <div class="match-card ${m.status}">
-                <div class="match-header"><span class="league-title">${m.league}</span><span class="time-badge">${m.time}</span></div>
-                <div class="teams">${m.home} — ${m.away}</div>
-                <div class="factor-box">
-                    <div class="factor-row"><span class="factor-label">🌤️ Условия:</span><span class="factor-value">${m.weather}</span></div>
-                    <div class="factor-row"><span class="factor-label">🏥 Потери:</span><span class="factor-value">${m.injuries}</span></div>
-                    <div class="factor-row"><span class="factor-label">📈 Динамика:</span><span class="factor-value">${m.dropOdds}</span></div>
-                    <div class="factor-row"><span class="factor-label">💰 LIVE Объем:</span><span class="factor-value" style="color:var(--green)">${m.volMoney}</span></div>
-                    <div class="factor-row"><span class="factor-label">📊 xG Модель:</span><span class="factor-value" style="color:var(--yellow)">${m.xgExpect}</span></div>
-                </div>
-                <div class="odds-line">
-                    <div class="odds-box"><span>П1</span><strong>${m.odds.P1}</strong></div>
-                    ${m.odds.X ? `<div class="odds-box"><span>X</span><strong>${m.odds.X}</strong></div>` : ''}
-                    <div class="odds-box"><span>П2</span><strong>${m.odds.P2}</strong></div>
-                </div>
-                <div class="bot-verdict">${m.verdict}</div>
-                <button class="share-card-btn" id="sh-${m.id}" onclick="copyMatch(${m.id})">Поделиться</button>
-            </div>
-        `).join('');
-
-        document.getElementById('sports-container').innerHTML = `
-            <div class="sport-column col-football"><div class="column-title"><span class="sport-name">${getTitle("⚽ Футбол", football)}</span></div>${renderCol(football)}</div>
-            <div class="sport-column col-tennis"><div class="column-title"><span class="sport-name">${getTitle("🎾 Теннис", tennis)}</span></div>${renderCol(tennis)}</div>
-            <div class="sport-column col-hockey"><div class="column-title"><span class="sport-name">${getTitle("🏒 Хоккей", hockey)}</span></div>${renderCol(hockey)}</div>
-        `;
+  function processAndRender() {
+    let filtered = globalCachedMatches;
+    if (currentSearchQuery !== "") { 
+      filtered = globalCachedMatches.filter(m =>
+        m.home.toLowerCase().includes(currentSearchQuery) ||
+        m.away.toLowerCase().includes(currentSearchQuery) ||
+        m.league.toLowerCase().includes(currentSearchQuery)
+      ); 
     }
+    let football = filtered.filter(m => m.sport === "football"), tennis = filtered.filter(m => m.sport === "tennis"), hockey = filtered.filter(m => m.sport === "hockey");
+    const getTitle = (name, arr) => `${name} (Найдено: ${arr.length} | <span class="title-good">${arr.filter(m=>m.status==="status-good").length}</span>)`;
+    const sortArr = (arr) => isFilterActive ? [...arr.filter(m=>m.status==="status-good").sort(compareTimeSmart), ...arr.filter(m=>m.status==="status-bad").sort(compareTimeSmart)] : [...arr].sort(compareTimeSmart);
+    
+    football = sortArr(football); tennis = sortArr(tennis); hockey = sortArr(hockey);
+    document.getElementById('live-counter').innerHTML = ` ИНТЕРНЕТ-МОНИТОРИНГ: Найдено ${filtered.length} ЖИВЫХ сегодняшних матчей из базы данных`;
+    
+    const renderCol = (list) => list.length === 0 ? '<div style="text-align:center;padding:20px;color:#64748b;">Матчей пока нет</div>' : list.map(m => `
+      <div class="match-card ${m.status}">
+        <div class="match-header"><span class="league-title">${m.league}</span><span class="time-badge">${m.time}</span></div>
+        <div class="teams">${m.home} — ${m.away}</div>
+        <div class="factor-box">
+          <div class="factor-row"><span class="factor-label"> Условия:</span><span class="factor-value">${m.weather}</span></div>
+          <div class="factor-row"><span class="factor-label"> Потери:</span><span class="factor-value">${m.injuries}</span></div>
+          <div class="factor-row"><span class="factor-label"> Динамика:</span><span class="factor-value">${m.dropOdds}</span></div>
+          <div class="factor-row"><span class="factor-label"> LIVE Объем:</span><span class="factor-value" style="color:var(--green)">${m.volMoney}</span></div>
+          <div class="factor-row"><span class="factor-label"> xG Модель:</span><span class="factor-value" style="color:var(--yellow)">${m.xgExpect}</span></div>
+        </div>
+        <div class="odds-line">
+          <div class="odds-box"><span>П1</span><strong>${m.odds.P1}</strong></div>
+          ${m.odds.X ? `<div class="odds-box"><span>X</span><strong>${m.odds.X}</strong></div>` : ''}
+          <div class="odds-box"><span>П2</span><strong>${m.odds.P2}</strong></div>
+        </div>
+        <div class="bot-verdict">${m.verdict}</div>
+        <button class="share-card-btn" id="sh-${m.id}" onclick="copyMatch(${m.id})">Поделиться</button>
+      </div>
+    `).join('');
+    document.getElementById('sports-container').innerHTML = `
+      <div class="sport-column col-football"><div class="column-title"><span class="sport-name">${getTitle(" Футбол", football)}</span></div>${renderCol(football)}</div>
+      <div class="sport-column col-tennis"><div class="column-title"><span class="sport-name">${getTitle(" Теннис", tennis)}</span></div>${renderCol(tennis)}</div>
+      <div class="sport-column col-hockey"><div class="column-title"><span class="sport-name">${getTitle(" Хоккей", hockey)}</span></div>${renderCol(hockey)}</div>
+    `;
+  }
 
-    function copyMatch(id) {
-        const m = globalCachedMatches.find(x => x.id === id); if (!m) return;
-        const o = m.odds.X ? "П1: " + m.odds.P1 + " | X: " + m.odds.X + " | П2: " + m.odds.P2 : "П1: " + m.odds.P1 + " | П2: " + m.odds.P2;
-        const txt = "🏆 WINLINE REAL LIVE 🏆 " + m.home + " — " + m.away + " Кэфы: " + o + " ВЕРДИКТ: " + m.rawVerdictText;
-        navigator.clipboard.writeText(txt).then(() => {
-            const b = document.getElementById("sh-" + id); b.classList.add('copied'); b.innerText = 'Скопировано!';
-            setTimeout(() => { b.classList.remove('copied'); b.innerText = 'Поделиться'; }, 2000);
-        });
-    }
+  function copyMatch(id) {
+    const m = globalCachedMatches.find(x => x.id === id); if (!m) return;
+    const o = m.odds.X ? "П1: " + m.odds.P1 + " | X: " + m.odds.X + " | П2: " + m.odds.P2 : "П1: " + m.odds.P1 + " | П2: " + m.odds.P2;
+    const txt = " WINLINE REAL LIVE " + m.home + " — " + m.away + " Кэфы: " + o + " ВЕРДИКТ: " + m.rawVerdictText;
+    navigator.clipboard.writeText(txt).then(() => {
+      const b = document.getElementById("sh-" + id); b.classList.add('copied'); b.innerText = 'Скопировано!';
+      setTimeout(() => { b.classList.remove('copied'); b.innerText = 'Поделиться'; }, 2000);
+    });
+  }
 
-    function toggleSmartFilter() {
-        const b = document.getElementById('smart-filter-btn'); isFilterActive = !isFilterActive;
-        if (isFilterActive) { b.classList.add('active'); b.innerHTML = `<span>✅ ОДОБРЕННЫЕ МАТЧИ НАВЕРХУ (СБРОСИТЬ)</span>`; }
-        else { b.classList.remove('active'); b.innerHTML = `<span>⚡ ПОДНЯТЬ ОДОБРЕННЫЕ МАТЧИ НАВЕРХ</span>`; }
-        processAndRender();
-    }
+  function toggleSmartFilter() {
+    const b = document.getElementById('smart-filter-btn'); isFilterActive = !isFilterActive;
+    if (isFilterActive) { b.classList.add('active'); b.innerHTML = `<span> ОДОБРЕННЫЕ МАТЧИ НАВЕРХУ (СБРОСИТЬ)</span>`; }
+    else { b.classList.remove('active'); b.innerHTML = `<span> ПОДНЯТЬ ОДОБРЕННЫЕ МАТЧИ НАВЕРХ</span>`; }
+    processAndRender();
+  }
 
-    function initAutoRefreshLogic() {
-        if (autoRefreshTimer) clearInterval(autoRefreshTimer); if (countdownInterval) clearInterval(countdownInterval);
-        secondsLeft = 1800; autoRefreshTimer = setInterval(() => { buildHugeWinlineLine(); }, 1800000);
-        countdownInterval = setInterval(() => {
-            secondsLeft--; if (secondsLeft <= 0) secondsLeft = 1800;
-            const node = document.getElementById('refresh-btn-text'); if (node) node.innerText = `🔄 ОБНОВИТЬ (Авто через ${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')})`;
-        }, 1000);
-    }
+  function initAutoRefreshLogic() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer); if (countdownInterval) clearInterval(countdownInterval);
+    secondsLeft = 1800; autoRefreshTimer = setInterval(() => { buildHugeWinlineLine(); }, 1800000);
+    countdownInterval = setInterval(() => {
+      secondsLeft--; if (secondsLeft <= 0) secondsLeft = 1800;
+      const node = document.getElementById('refresh-btn-text'); if (node) node.innerText = `ОБНОВИТЬ (Авто через ${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')})`;
+    }, 1000);
+  }
 
-    function refreshLiveLine() { buildHugeWinlineLine(); initAutoRefreshLogic(); }
-    refreshLiveLine();
+  function refreshLiveLine() { buildHugeWinlineLine(); initAutoRefreshLogic(); }
+  refreshLiveLine();
 </script>
 </body>
 </html>
