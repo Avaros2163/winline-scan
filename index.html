@@ -196,10 +196,7 @@
   async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
     try {
-      const part1 = 'https://' + 'api.';
-      const part2 = 'the-odds-api.com' + '/v4/sports/upcoming/odds/';
-      const part3 = '?apiKey=' + API_KEY + '&regions=eu,au&markets=h2h&oddsFormat=decimal&commenceTimeTo=2026-07-09T23:59:59Z';
-      const response = await fetch(part1 + part2 + part3);
+      
       if (!response.ok) throw new Error("Ошибка лимитов ключа или сети");
 
       const data = await response.json();
