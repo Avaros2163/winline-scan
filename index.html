@@ -205,11 +205,17 @@
       const data = await response.json();
       const list = [];
 
-      data.forEach((match, idx) => {
+            data.forEach((match, idx) => {
         let sportType = "football";
+        const title = match.sport_key.toLowerCase();
         const group = match.sport_title.toLowerCase();
-        if (group.includes("tennis")) sportType = "tennis";
-        else if (group.includes("hockey")) sportType = "hockey";
+        
+        if (title.includes("tennis") || group.includes("tennis")) {
+          sportType = "tennis";
+        } else if (title.includes("hockey") || group.includes("icehockey") || group.includes("hockey")) {
+          sportType = "hockey";
+        }
+
 
         const valP1 = 2.10;
         const valP2 = 3.40;
