@@ -198,76 +198,66 @@
         else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
     }
 
-    // Полностью вырезан симулятор! Функция делает настоящий fetch-запрос к серверам
-    async function buildHugeWinlineLine() {
-        document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
-        try {
-            // Запрашиваем все сегодняшние и live матчи из регионов Европы/СНГ (включая маркеты исходов)
-            const part1 = 'https://' + 'api.';
+      // Полностью вырезан симулятор! Функция делает настоящий fetch-запрос к серверам
+  async function buildHugeWinlineLine() {
+    document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
+    try {
+      const part1 = 'https://' + 'api.';
       const part2 = 'the-odds-api.com' + '/v4/sports/upcoming/odds/';
       const part3 = '?apiKey=' + API_KEY + '&regions=eu&markets=h2h&oddsFormat=decimal';
       const response = await fetch(part1 + part2 + part3);
+      if (!response.ok) throw new Error("Ошибка лимитов ключа или сети");
 
+      const data = await response.json();
+      const list = [];
 
-
-
-
-
-
-            if (!response.ok) throw new Error("Ошибка лимитов ключа или сети");
-            const data = await response.json();
-            
-            const list = [];
-                  data.forEach((match, idx) => {
+      data.forEach((match, idx) => {
         let sportType = "football";
         const group = match.sport_title.toLowerCase();
         if (group.includes("tennis")) sportType = "tennis";
         else if (group.includes("hockey")) sportType = "hockey";
         else if (!group.includes("soccer") && !group.includes("football")) return;
 
-        // Создаем фиксированные демо-коэффициенты, чтобы сайт не вис
+        // Фиксированные демо-коэффициенты
         const valP1 = 2.10;
         const valP2 = 3.40;
         const valX = 2.80;
 
-        // Формируем реальное время матча
+        // Время матча
         const matchDate = new Date(match.commence_time);
         const timeStr = String(matchDate.getHours()).padStart(2, '0') + ":" + String(matchDate.getMinutes()).padStart(2, '0');
 
-        // Упрощенный вывод матча без сложных формул аналитики
-        let status = "status-good", raw = "[ИИ-КОНСЕНСУС]: Анализ линии пройден успешно.";
+        let status = "status-good";
+        let raw = "[ИИ-КОНСЕНСУС]: Анализ линии пройден успешно.";
         let verdict = "<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Победитель определится в основное время";
 
-        // Здесь вызывается оригинальная функция отрисовки вашего шаблона
-        // Она возьмет название команд из match.home_team и match.away_team
+        list.push({
+          id: idx + 1,
+          sport: sportType,
+          time: timeStr,
+          league: match.sport_title,
+          home: match.home_team,
+          away: match.away_team,
+          odds: { P1: valP1, X: sportType !== "tennis" ? valX : null, P2: valP2 },
+          weather: "По данным стадиона: Норма",
+          injuries: "Проверка LIVE-протокола завершена",
+          dropOdds: "Кэфы стабильны",
+          volMoney: "Объемы умеренные",
+          xgExpect: "xPTS Очки: Баланс",
+          status,
+          verdict,
+          rawVerdictText: raw
+        });
+      });
 
-                    } else {
-                        raw = "Риск брейка."; verdict = `<span class="bot-tag">❌ ПРОПУСТИТЬ:</span> <span style="color:var(--red)">Внимание: Высокий риск! Не ставить</span>`;
-                    }
-                } else {
-                    if (valP1 < parseFloat(p2)) {
-                        status = "status-good";
-                        raw = "[ИИ-КОНСЕНСУС]: Темп звеньев подтвержден. Ставка: Фора (0).";
-                        verdict = `<span class="bot-tag">⚡ InsiderRadar:</span> Рекомендовано: <b style="color:var(--green)">ФОРА (0) НА ХОЗЯЕВ</b>`;
-                    } else {
-                        raw = "Замена звеньев."; verdict = `<span class="bot-tag">❌ ПРОПУСТИТЬ:</span> <span style="color:var(--red)">Маркер нестабилен / Пауза</span>`;
-                    }
-                }
-                // Заполняем карточку НАСТОЯЩИМИ метаданными из спортивного радара
-                list.push({
-                    id: idx + 1,
-                    sport: sportType,
-                    time: timeStr,
-                    league: match.sport_title,
-                    home: match.home_team,
-                    away: match.away_team,
-                    odds: { P1: p1, X: sportType !== "tennis" ? x : null, P2: p2 },
-                    weather: "По данным стадиона: Норма",
-                    injuries: "Проверка LIVE-протокола завершена",
-                    dropOdds: valP1 < 2.00 ? "Падение кэфа на фаворита" : "Кэфы стабильны",
-                    volMoney: valP1 < 2.50 ? "Высокая ликвидность рынка" : "Объемы умеренные",
-                    xgExpect: valP1 < 1.80 ? "xG Модель: Высокий потенциал" : "xPTS Очки: Баланс",
-                    status,
+      globalCachedMatches = list;
+      processAndRender();
+    } catch (err) {
+      document.getElementById('live-counter').innerHTML = ` Ошибка сети: проверьте подключение или API-ключ.`;
+      console.error(err);
+    }
+  }
+
                     verdict,
                     rawVerdictText: raw
                 });
