@@ -198,7 +198,7 @@
         else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
     }
 
-      // Полностью вырезан симулятор! Функция делает настоящий fetch-запрос к серверам
+        // Полностью вырезан симулятор! Функция делает настоящий fetch-запрос к серверам
   async function buildHugeWinlineLine() {
     document.getElementById('live-counter').innerHTML = "⏳ Подключение к серверам The Odds API... Сканирование линии...";
     try {
@@ -258,18 +258,6 @@
     }
   }
 
-                    verdict,
-                    rawVerdictText: raw
-                });
-            });
-
-            globalCachedMatches = list;
-            processAndRender();
-        } catch (err) {
-            document.getElementById('live-counter').innerHTML = `❌ Ошибка сети: проверьте подключение или API-ключ.`;
-            console.error(err);
-        }
-    }
     const compareTimeSmart = (a, b) => {
         const [hA, mA] = a.time.split(':').map(Number);
         const [hB, mB] = b.time.split(':').map(Number);
