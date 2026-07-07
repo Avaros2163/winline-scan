@@ -208,7 +208,7 @@
     else { d.setAttribute('data-theme', 'light'); b.innerText = 'ТЕМНАЯ ТЕМА'; }
   }
 
-      async function buildHugeWinlineLine() {
+        async function buildHugeWinlineLine() {
     const node = document.getElementById('live-counter');
     node.innerHTML = '<div class="radar-loader"></div> Подключение к серверам ИИ... Сканирование и фильтрация линии...';
     try {
@@ -309,6 +309,7 @@
       processAndRender();
     }
   }
+
   const compareTimeSmart = (a, b) => a.rawTimestamp - b.rawTimestamp;
 
   function handleSearch(val) { currentSearchQuery = val.trim().toLowerCase(); processAndRender(); }
