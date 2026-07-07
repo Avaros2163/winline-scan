@@ -273,15 +273,20 @@
         const arbitrageCalc = (1/p1 + 1/p2 + (valX !== "—" ? 1/parseFloat(valX) : 0) < 1.02) ? "Вилки (ArbitrageScan): Обнаружен валуй 1.5%" : "Вилки (ArbitrageScan): Маржа БК в норме";
         const consensusCalc = `Консенсус (PublicConsensus): Мнение игроков П1: ${Math.round(probP1 * 1.1)}% | П2: ${Math.round(probP2 * 1.1)}%`;
 
-        let status = "status-good";
-        let verdict = "<span class='hot-tag'>РЕКОМЕНДОВАНО:</span> Победитель определится в основное время";
-        if (p1 < 1.60) {
-          verdict = `<span class='hot-tag'>PoissonMath:</span> Уверенная победа хозяев (${probP1}%)`;
-        } else if (p2 < 1.60) {
-          verdict = `<span class='hot-tag'>PoissonMath:</span> Уверенная победа гостей (${probP2}%)`;
-        } else {
+                let status = "status-bad"; 
+        let verdict = "<span class='hot-tag'>АНАЛИЗ:</span> Недостаточно факторов для уверенной ставки. Пропустите матч.";
+
+        if (p1 < 1.65 && probP1 > 55 && p1 < p2) {
+          status = "status-good";
+          verdict = `<span class='hot-tag' style='color:#2ecc71'>🔥 КОНСЕНСУС ИИ (ОДОБРЕНО):</span> Ставка на победу команды 1. Преимущество: +${Math.round(probP1 - 50)}%`;
+        } 
+        else if (p2 < 1.65 && probP2 > 55 && p2 < p1) {
+          status = "status-good";
+          verdict = `<span class='hot-tag' style='color:#2ecc71'>🔥 КОНСЕНСУС ИИ (ОДОБРЕНО):</span> Ставка на победу команды 2. Преимущество: +${Math.round(probP2 - 50)}%`;
+        }
+        else if (p1 >= 2.0 && p2 >= 2.0 && valX !== "—") {
           status = "status-bad";
-          verdict = `<span class='hot-tag'>ValueFinder:</span> Высокие риски. Равные шансы на исход`;
+          verdict = `<span class='hot-tag' style='color:#f1c40f'>⚠️ ВНИМАНИЕ (РАВНЫЕ ШАНСЫ):</span> Повышен риск ничьей. Рекомендуется тотал меньше или двойной исход.`;
         }
 
         list.push({
