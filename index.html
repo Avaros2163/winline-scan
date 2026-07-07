@@ -357,6 +357,12 @@
           <div class="factor-row"><span class="factor-label"> Потери:</span><span class="factor-value">${m.injuries}</span></div>
           <div class="factor-row"><span class="factor-label"> Динамика:</span><span class="factor-value">${m.dropOdds}</span></div>
           <div class="factor-row"><span class="factor-label"> LIVE Объем:</span><span class="factor-value" style="color:var(--green)">${m.volMoney}</span></div>
+                    <div class="factor-row">
+            <span class="factor-label"> Математика Пуассона:</span>
+            <span class="factor-value" style="color:var(--blue)">
+              ${m.odds.P1 !== "—" ? "Вероятность П1: " + Math.round((1 / parseFloat(m.odds.P1)) * 85) + "%" : "Расчет..."}
+            </span>
+          </div>
           <div class="factor-row"><span class="factor-label"> xG Модель:</span><span class="factor-value" style="color:var(--yellow)">${m.xgExpect}</span></div>
         </div>
         <div class="odds-line">
