@@ -354,11 +354,11 @@
       <div class="match-card ${m.status}">
         <div class="match-header"><span class="league-title">${translateToRu(m.league)}</span><span class="time-badge">${m.time}</span></div>
         <div class="teams">${translateToRu(m.home)} — ${translateToRu(m.away)}</div>
-                <div class="factor-box">
-          <div class="factor-row"><span class="factor-label"> Модель Пуассона:</span><span class="factor-value">${m.weather}</span></div>
-          <div class="factor-row"><span class="factor-label"> Мотивация:</span><span class="factor-value">${m.injuries}</span></div>
+                        <div class="factor-box">
+          <div class="factor-row"><span class="factor-label"> Стадион / Условия:</span><span class="factor-value">По данным арены: Норма</span></div>
+          <div class="factor-row"><span class="factor-label"> Мотивация команд:</span><span class="factor-value">${m.injuries}</span></div>
           <div class="factor-row"><span class="factor-label"> Динамика рынка:</span><span class="factor-value">${m.dropOdds}</span></div>
-          <div class="factor-row"><span class="factor-label"> Денежный объем:</span><span class="factor-value" style="color:var(--green)">${m.volMoney}</span></div>
+          <div class="factor-row"><span class="factor-label"> LIVE Объем:</span><span class="factor-value" style="color:var(--green)">${m.volMoney}</span></div>
           <div class="factor-row"><span class="factor-label"> Ожидаемый xG/Сеты:</span><span class="factor-value" style="color:var(--yellow)">${m.xgExpect}</span></div>
           <div class="factor-row"><span class="factor-label"> Судейский фактор:</span><span class="factor-value" style="color:var(--purple)">${m.referee}</span></div>
           <div class="factor-row"><span class="factor-label"> Ментальный тонус:</span><span class="factor-value">${m.psycho}</span></div>
