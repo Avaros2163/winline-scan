@@ -31,7 +31,7 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 .search-btn { background: var(--winline-orange); border: none; border-radius: 8px; color: #fff; font-weight: bold; padding: 0 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; min-width: 90px; }
 .search-btn:hover { background: #e04f00; }
 .column-title { font-size: 13px; font-weight: bold; color: var(--text-title); border-bottom: 1px solid var(--factor-border); padding-bottom: 6px; text-transform: uppercase; margin: 0; }
-.google-frame-container { flex: 1; width: 100%; height: 100%; background: var(--card-bg); border-radius: 8px; overflow-y: auto; border: 1px solid var(--factor-border); padding: 10px; box-sizing: border-box; }
+.google-frame-container { flex: 1; width: 100%; height: 100%; background: var(--card-bg); border-radius: 8px; overflow-y: auto; border: 1px solid var(--factor-border); padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .verdict-box { display: flex; flex-direction: column; gap: 12px; }
 .verdict-title { font-size: 18px; font-weight: bold; color: #fff; border-bottom: 1px solid var(--factor-border); padding-bottom: 8px; text-align: center; }
 .market-section { background: #060709; border: 1px solid var(--factor-border); border-radius: 6px; padding: 10px; }
@@ -40,25 +40,22 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 .stats-row:last-child { border-bottom: none; }
 .signal-banner { padding: 14px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 32px; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
 .signal-banner.good { background: rgba(46, 204, 113, 0.2); color: var(--green); border: 2px solid var(--green); box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); }
-.match-card { background: #161925; border: 1px solid var(--factor-border); border-radius: 6px; padding: 12px; margin-bottom: 10px; }
-.match-link { color: #fff; text-decoration: none; font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px; }
-.match-link:hover { color: var(--winline-orange); }
-.match-snippet { font-size: 12px; color: #64748b; line-height: 1.4; }
+.hint-text { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
 </style>
 </head>
 <body>
 <div class="app-wrapper">
  <header><h1>Многофакторный ИИ-Фильтр Прогнозирования Исходных Маркетов</h1></header>
- <div class="live-counter-panel">АВТОНОМНЫЙ СПОРТИВНЫЙ МОДУЛЬ СИНХРОНИЗАЦИИ АКТИВЕН</div>
+ <div class="live-counter-panel">ИНТЕГРАЦИЯ С ПРЯМЫМ ПОИСКОМ GOOGLE АКТИВНА</div>
  <div class="main-split-panel">
  <div class="panel-left-side">
  <div class="search-bar-container">
- <input type="text" id="live-search" class="search-input" placeholder="Введите команду или игрока (например, Реал Мадрид) и Enter...">
- <button class="search-btn" onclick="startSearch()">Найти</button>
+   <input type="text" id="live-search" class="search-input" placeholder="Введите название команды или игрока и нажмите Найти...">
+   <button class="search-btn" onclick="startGoogleSearch()">Найти</button>
  </div>
- <div class="column-title">Ближайшие матчи по расписанию</div>
- <div class="google-frame-container" id="google-search-results">
-   <p style="color: #64748b; text-align: center; margin-top: 20px;">Введите команду слева для загрузки расписания...</p>
+ <div class="column-title">Поисковый модуль расписания</div>
+ <div class="google-frame-container" id="left-status-box">
+   <p class="hint-text" id="dynamic-hint">Введите название команды.<br>Скрипт автоматически добавит скрытый фильтр матчей Winline и откроет оригинальное расписание Google в новой вкладке.</p>
  </div>
  </div>
  <div id="right-verdict-box" class="panel-right-side placeholder-text" style="color: #64748b; text-align: center; display: flex; align-items: center; justify-content: center;">
@@ -67,60 +64,32 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
  </div>
 </div>
 <script>
-async function startSearch() {
+function startGoogleSearch() {
  const searchInput = document.getElementById("live-search");
  let query = searchInput.value.trim();
  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
  
- const resultsContainer = document.getElementById("google-search-results");
- resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Загрузка актуального календаря матчей...</p>';
+ // Скрытый фоновый хвост
+ let hiddenTail = "все будущие игры в винлайн за 7 дней ";
+ let fullQuery = hiddenTail + query;
+ 
+ // Ссылка для Google
+ let googleUrl = "https://google.com" + encodeURIComponent(fullQuery);
+ 
+ // Открываем Google в новой вкладке
+ window.open(googleUrl, '_blank');
+ 
+ // Обновляем статус в левом окне
+ const leftBox = document.getElementById("left-status-box");
+ leftBox.innerHTML = `
+   <div style="font-size: 40px; margin-bottom: 15px;">🚀</div>
+   <div style="font-size: 15px; color: #fff; font-weight: bold; margin-bottom: 10px;">Запрос успешно отправлен в Google!</div>
+   <div style="font-size: 13px; color: var(--winline-orange);">Ищем: "${fullQuery}"</div>
+   <p style="font-size: 12px; color: #64748b; margin-top: 15px; max-width: 300px;">Расписание матчей открылось в новой вкладке вашего браузера без блокировок сети.</p>
+ `;
 
- // Используем стабильный международный API без ограничений для поиска инфо
- let url = "https://wikipedia.org" + encodeURIComponent(query + " текущий сезон календарь матчей") + "&format=json&origin=*";
-
- try {
-   let response = await fetch(url);
-   let data = await response.json();
-   let searchResults = data.query.search;
-
-   if (!searchResults || searchResults.length === 0) {
-     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Информации о ближайших играх не найдено.</p>';
-     return;
-   }
-
-   resultsContainer.innerHTML = "";
-
-   // Генерируем карточки матчей по расписанию
-   searchResults.slice(0, 4).forEach((item, index) => {
-     const matchCard = document.createElement("div");
-     matchCard.className = "match-card";
-     
-     // Имитируем распределение по времени на ближайшие 7 дней
-     let day = index + 1;
-     let matchTitle = item.title;
-     let cleanSnippet = item.snippet.replace(/<\/?[^>]+(>|$)/g, ""); // очистка от тегов
-     
-     matchCard.innerHTML = `
-       <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
-         📅 Расписание Winline: через ${day} дн. в 20:00
-       </div>
-       <a href="https://wikipedia.org{encodeURIComponent(item.title)}" target="_blank" class="match-link">
-         ${matchTitle} — Ближайший тур
-       </a>
-       <div class="match-snippet">
-         Текущие кондиции: ${cleanSnippet}... Для просмотра детальных коэффициентов Winline нажмите на заголовок события.
-       </div>
-     `;
-     resultsContainer.appendChild(matchCard);
-   });
-
-   // Запускаем расчет вероятностей в правой панели
-   updateVerdictPanel(query);
-
- } catch (error) {
-   console.error("Ошибка:", error);
-   resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка синхронизации календаря.</p>';
- }
+ // Запускаем калькулятор вероятностей
+ updateVerdictPanel(query);
 }
 
 function updateVerdictPanel(teamName) {
@@ -136,7 +105,7 @@ function updateVerdictPanel(teamName) {
  <div class="verdict-box">
  <div class="verdict-title">Анализ запроса: ${teamName}</div>
  <div class="market-section">
- <div class="market-title">Основной исход (Поисковый Анализ)</div>
+ <div class="market-title">Основной исход (Поисковый Анализ Winline)</div>
  <div class="stats-row"><span>Вероятность Победы 1:</span><strong>${p1}</strong></div>
  <div class="stats-row"><span>Вероятность Ничьей X:</span><strong>${x}</strong></div>
  <div class="stats-row"><span>Вероятность Победы 2:</span><strong>${p2}</strong></div>
@@ -160,7 +129,7 @@ function updateVerdictPanel(teamName) {
 document.getElementById("live-search").addEventListener("keydown", (e) => {
  if (e.key === "Enter") {
    e.preventDefault();
-   startSearch();
+   startGoogleSearch();
  }
 });
 </script>
