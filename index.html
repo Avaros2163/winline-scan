@@ -25,10 +25,10 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 .main-split-panel { display: flex; flex: 1; gap: 15px; overflow: hidden; height: calc(100% - 80px); }
 .panel-left-side { flex: 1; width: 45%; display: flex; flex-direction: column; gap: 10px; height: 100%; }
 .panel-right-side { flex: 1.2; width: 55%; border-radius: 8px; padding: 15px; overflow-y: auto; background: #10121a; border: 1px solid var(--factor-border); height: 100%; box-sizing: border-box; }
-.search-bar-container { display: flex; width: 100%; gap: 10px; }
-.search-input { width: 100%; padding: 12px 15px; font-size: 14px; background-color: var(--card-bg); border: 1px solid var(--factor-border); border-radius: 8px; color: #fff; outline: none; }
+.search-bar-container { display: flex; width: 100%; gap: 10px; align-items: center; }
+.search-input { flex: 1; padding: 12px 15px; font-size: 14px; background-color: var(--card-bg); border: 1px solid var(--factor-border); border-radius: 8px; color: #fff; outline: none; box-sizing: border-box; }
 .search-input:focus { border-color: var(--winline-orange); }
-.search-btn { background: var(--winline-orange); border: none; border-radius: 8px; color: #fff; font-weight: bold; padding: 0 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; min-width: 90px; }
+.search-btn { background: var(--winline-orange); border: none; border-radius: 8px; color: #fff; font-weight: bold; padding: 12px 20px; cursor: pointer; text-transform: uppercase; font-size: 12px; min-width: 90px; height: 43px; box-sizing: border-box; }
 .search-btn:hover { background: #e04f00; }
 .column-title { font-size: 13px; font-weight: bold; color: var(--text-title); border-bottom: 1px solid var(--factor-border); padding-bottom: 6px; text-transform: uppercase; margin: 0; }
 .google-frame-container { flex: 1; width: 100%; height: 100%; background: var(--card-bg); border-radius: 8px; overflow-y: auto; border: 1px solid var(--factor-border); padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -49,13 +49,18 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
  <div class="live-counter-panel">ИНТЕГРАЦИЯ С ПРЯМЫМ ПОИСКОМ GOOGLE АКТИВНА</div>
  <div class="main-split-panel">
  <div class="panel-left-side">
+ 
  <div class="search-bar-container">
-   <input type="text" id="live-search" class="search-input" placeholder="Введите название команды или игрока и нажмите Найти...">
-   <button class="search-btn" onclick="startGoogleSearch()">Найти</button>
+   <input type="text" id="live-search" class="search-input" placeholder="Введите название команды или игрока..." oninput="updateGoogleLink()">
+   <!-- Стандартная HTML ссылка защищает адресную строку от поломок по CORS -->
+   <a id="google-link" href="https://google.com" target="_blank" style="text-decoration: none; display: block;">
+     <button class="search-btn" onclick="startSearchWorkflow()">Найти</button>
+   </a>
  </div>
+ 
  <div class="column-title">Поисковый модуль расписания</div>
  <div class="google-frame-container" id="left-status-box">
-   <p class="hint-text" id="dynamic-hint">Введите название команды.<br>Скрипт автоматически добавит скрытый фильтр матчей Winline и откроет оригинальное расписание Google в новой вкладке.</p>
+   <p class="hint-text">Введите название команды.<br>Скрипт автоматически добавит скрытый фильтр матчей Winline и откроет оригинальное расписание Google в новой вкладке.</p>
  </div>
  </div>
  <div id="right-verdict-box" class="panel-right-side placeholder-text" style="color: #64748b; text-align: center; display: flex; align-items: center; justify-content: center;">
@@ -64,30 +69,39 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
  </div>
 </div>
 <script>
-function startGoogleSearch() {
+// Данная функция обновляет ссылку на Google "на лету" при каждом вводе символа в строку поиска
+function updateGoogleLink() {
+  const searchInput = document.getElementById("live-search");
+  const linkElement = document.getElementById("google-link");
+  let query = searchInput.value.trim();
+  
+  if (query.length < 2) {
+    linkElement.href = "https://google.com" + encodeURIComponent("все будущие игры в винлайн за 7 дней матчи");
+    return;
+  }
+  
+  let fullQueryText = "все будущие игры в винлайн за 7 дней " + query;
+  // Жёстко прописанный правильный разделитель /search?q=
+  linkElement.href = "https://google.com" + encodeURIComponent(fullQueryText);
+}
+
+function startSearchWorkflow() {
   const searchInput = document.getElementById("live-search");
   let query = searchInput.value.trim();
-  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
+  if (query.length < 2) { alert("Пожалуйста, введите название команды."); return; }
   
-  // Создаем чистый поисковый запрос
-  let textToSearch = "все будущие игры в винлайн за 7 дней " + query;
+  let fullQueryText = "все будущие игры в винлайн за 7 дней " + query;
   
-  // Собираем ссылку. Обратите внимание на /search?q= — это разделитель!
-  let googleUrl = "https://google.com" + encodeURIComponent(textToSearch);
-  
-  // Открываем вкладку
-  window.open(googleUrl, '_blank');
-  
-  // Обновляем статус в левом окне
+  // Обновляем статусную панель в левой колонке
   const leftBox = document.getElementById("left-status-box");
   leftBox.innerHTML = `
     <div style="font-size: 40px; margin-bottom: 15px;">🚀</div>
     <div style="font-size: 15px; color: #fff; font-weight: bold; margin-bottom: 10px;">Запрос успешно отправлен в Google!</div>
-    <div style="font-size: 13px; color: var(--winline-orange);">Ищем: "${textToSearch}"</div>
-    <p style="font-size: 12px; color: #64748b; margin-top: 15px; max-width: 300px;">Расписание матчей открылось в новой вкладке вашего браузера без блокировок сети.</p>
+    <div style="font-size: 13px; color: var(--winline-orange); background: #060709; padding: 8px; border-radius: 4px; border: 1px solid var(--factor-border);">Ищем: "${fullQueryText}"</div>
+    <p style="font-size: 12px; color: #64748b; margin-top: 15px; max-width: 320px; line-height: 1.4;">Оригинальное расписание матчей открылось в новой вкладке вашего браузера без блокировок сети.</p>
   `;
 
-  // Запускаем калькулятор вероятностей
+  // Запускаем калькулятор вероятностей в правом окне
   updateVerdictPanel(query);
 }
 
@@ -102,12 +116,12 @@ function updateVerdictPanel(teamName) {
  
  box.innerHTML = `
  <div class="verdict-box">
- <div class="verdict-title">Анализ запроса: ${teamName}</div>
+ <div class="verdict-title">Анализ запроса: ` + teamName + `</div>
  <div class="market-section">
  <div class="market-title">Основной исход (Поисковый Анализ Winline)</div>
- <div class="stats-row"><span>Вероятность Победы 1:</span><strong>${p1}</strong></div>
- <div class="stats-row"><span>Вероятность Ничьей X:</span><strong>${x}</strong></div>
- <div class="stats-row"><span>Вероятность Победы 2:</span><strong>${p2}</strong></div>
+ <div class="stats-row"><span>Вероятность Победы 1:</span><strong>` + p1 + `</strong></div>
+ <div class="stats-row"><span>Вероятность Ничьей X:</span><strong>` + x + `</strong></div>
+ <div class="stats-row"><span>Вероятность Победы 2:</span><strong>` + p2 + `</strong></div>
  </div>
  <div class="market-section">
  <div class="market-title">Двойной шанс</div>
@@ -125,10 +139,12 @@ function updateVerdictPanel(teamName) {
  `;
 }
 
-document.getElementById("live-search").addEventListener("keydown", (e) => {
+// Поддержка запуска по кнопке Enter
+document.getElementById("live-search").addEventListener("keydown", function(e) {
  if (e.key === "Enter") {
    e.preventDefault();
-   startGoogleSearch();
+   updateGoogleLink();
+   document.getElementById("google-link").click();
  }
 });
 </script>
