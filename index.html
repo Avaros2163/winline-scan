@@ -40,26 +40,39 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 .stats-row:last-child { border-bottom: none; }
 .signal-banner { padding: 14px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 32px; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
 .signal-banner.good { background: rgba(46, 204, 113, 0.2); color: var(--green); border: 2px solid var(--green); box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); }
-.match-card { background: #161925; border: 1px solid var(--factor-border); border-radius: 6px; padding: 12px; margin-bottom: 10px; transition: border-color 0.2s; }
-.match-card:hover { border-color: var(--winline-orange); }
-.match-link { color: #fff; text-decoration: none; font-size: 14px; font-weight: bold; display: block; margin-bottom: 6px; }
-.match-link:hover { color: var(--winline-orange); }
-.match-snippet { font-size: 12px; color: #64748b; line-height: 1.4; }
+
+/* Хак для стилизации официального виджета Google под темную тему */
+.gsc-control-cse { background-color: transparent !important; border: none !important; padding: 0 !important; }
+.gsc-search-box-container { display: none !important; } /* Полностью скрываем стандартную белую строку поиска Google */
+.gsc-wrapper { background: transparent !important; }
+.gsc-webResult { background-color: #161925 !important; border: 1px solid var(--factor-border) !important; border-radius: 6px !important; margin-bottom: 10px !important; padding: 10px !important; }
+.gsc-webResult:hover { border-color: var(--winline-orange) !important; }
+.gs-title, .gs-title * { color: #ffffff !important; font-weight: bold !important; text-decoration: none !important; font-size: 14px !important; }
+.gs-title *:hover { color: var(--winline-orange) !important; }
+.gs-snippet { color: #64748b !important; font-size: 12px !important; line-height: 1.4 !important; }
+.gsc-url-top { display: none !important; }
+.gsc-thumbnail-inside, .gsc-url-bottom { display: none !important; }
+.gsc-cursor-box { margin-top: 10px !important; }
+.gsc-cursor-page { color: #fff !important; background: #202637 !important; padding: 5px 10px !important; border-radius: 4px !important; margin-right: 5px !important; text-decoration: none !important; }
+.gsc-cursor-current-page { background: var(--winline-orange) !important; color: #fff !important; }
 </style>
+<!-- Подключаем официальный скрипт вашего поискового движка -->
+<script async src="https://google.com"></script>
 </head>
 <body>
 <div class="app-wrapper">
  <header><h1>Многофакторный ИИ-Фильтр Прогнозирования Исходных Маркетов</h1></header>
- <div class="live-counter-panel">ИНТЕГРАЦИЯ С ПОИСКОВЫМ ДВИЖКОМ АКТИВНА</div>
+ <div class="live-counter-panel">ИНТЕГРАЦИЯ С GOOGLE SEARCH WIDGET АКТИВНА</div>
  <div class="main-split-panel">
  <div class="panel-left-side">
  <div class="search-bar-container">
  <input type="text" id="live-search" class="search-input" placeholder="Введите название команды или игрока и нажмите Enter...">
- <button class="search-btn" onclick="openGoogleInFrame()">Найти</button>
+ <button class="search-btn" onclick="startSearch()">Найти</button>
  </div>
  <div class="column-title">Ближайшие матчи по расписанию</div>
- <div class="google-frame-container" id="google-search-results">
- <p style="color: #64748b; text-align: center; margin-top: 20px;">Введите команду слева для поиска актуальных расписаний...</p>
+ <div class="google-frame-container">
+   <!-- Сюда официально и без блокировок Google выведет результаты -->
+   <div class="gcse-searchresults-only" data-gname="match-search"></div>
  </div>
  </div>
  <div id="right-verdict-box" class="panel-right-side placeholder-text" style="color: #64748b; text-align: center; display: flex; align-items: center; justify-content: center;">
@@ -68,85 +81,22 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
  </div>
 </div>
 <script>
-async function openGoogleInFrame() {
+function startSearch() {
  const searchInput = document.getElementById("live-search");
  let query = searchInput.value.trim();
  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
  
- const resultsContainer = document.getElementById("google-search-results");
- resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Поиск матчей в базе расписаний...</p>';
-
- // Скрытый фоновый запрос для точного поиска игр
- let fullQuery = "site:sports.ru OR site:flashscore.ru OR site:championat.com все будущие игры за 7 дней " + query;
+ // Скрытый фоновый запрос, который подмешивается автоматически
+ let fullQuery = "все будущие игры в винлайн за 7 дней " + query;
  
- // Используем открытый API поиск DuckDuckGo (HTML парсинг через CORS-прокси)
- let url = `https://allorigins.win{encodeURIComponent('https://duckduckgo.com' + encodeURIComponent(fullQuery))}`;
-
- try {
-   let response = await fetch(url);
-   let data = await response.json();
-   
-   // Создаем виртуальный парсер документа
-   let parser = new DOMParser();
-   let doc = parser.parseFromString(data.contents, "text/html");
-   let results = doc.querySelectorAll(".web-result");
-
-   if (results.length === 0) {
-     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Матчей на ближайшие 7 дней не найдено.</p>';
-     return;
-   }
-
-   resultsContainer.innerHTML = "";
-
-   // Берем первые 5 самых актуальных ссылок на матчи
-   let count = 0;
-   results.forEach(result => {
-     if (count >= 5) return;
-     
-     let titleEl = result.querySelector(".result__title a");
-     let snippetEl = result.querySelector(".result__snippet");
-     
-     if (titleEl && snippetEl) {
-       let title = titleEl.innerText;
-       let link = titleEl.getAttribute("href");
-       let snippet = snippetEl.innerText;
-
-       // Очищаем редирект-ссылки DuckDuckGo до прямых адресов сайтов
-       if (link.includes("uddg=")) {
-         link = decodeURIComponent(link.split("uddg=")[1].split("&")[0]);
-       }
-
-       const matchCard = document.createElement("div");
-       matchCard.className = "match-card";
-       
-       matchCard.innerHTML = `
-         <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
-           🏆 Ближайшее событие
-         </div>
-         <a href="${link}" target="_blank" class="match-link">
-           ${title}
-         </a>
-         <div class="match-snippet">
-           ${snippet}
-         </div>
-       `;
-       resultsContainer.appendChild(matchCard);
-       count++;
-     }
-   });
-
-   if (count === 0) {
-     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Информация временно недоступна. Попробуйте еще раз.</p>';
-     return;
-   }
-
-   // Запускаем калькулятор в правом окне
-   updateVerdictPanel(query);
-
- } catch (error) {
-   console.error("Ошибка поиска:", error);
-   resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка получения данных от поискового сервера.</p>';
+ // Управляем официальным элементом Google на странице, передавая ему скрытый текст
+ const element = google.search.cse.element.getElement('match-search');
+ if (element) {
+   element.execute(fullQuery);
  }
+
+ // Параллельно запускаем расчет вероятностей в правой панели
+ updateVerdictPanel(query);
 }
 
 function updateVerdictPanel(teamName) {
@@ -186,7 +136,7 @@ function updateVerdictPanel(teamName) {
 document.getElementById("live-search").addEventListener("keydown", (e) => {
  if (e.key === "Enter") {
    e.preventDefault();
-   openGoogleInFrame();
+   startSearch();
  }
 });
 </script>
