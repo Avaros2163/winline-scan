@@ -76,7 +76,7 @@ async function startSearch() {
  resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Загрузка актуального календаря матчей...</p>';
 
  // Используем стабильный международный API без ограничений для поиска инфо
- let url = `https://wikipedia.org{encodeURIComponent(query + ' текущий сезон календарь матчей')}&format=json&origin=*`;
+ let url = "https://wikipedia.org" + encodeURIComponent(query + " текущий сезон календарь матчей") + "&format=json&origin=*";
 
  try {
    let response = await fetch(url);
