@@ -50,7 +50,7 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 <body>
 <div class="app-wrapper">
  <header><h1>Многофакторный ИИ-Фильтр Прогнозирования Исходных Маркетов</h1></header>
- <div class="live-counter-panel">ИНТЕГРАЦИЯ GOOGLE SEARCH API АКТИВНА</div>
+ <div class="live-counter-panel">ИНТЕГРАЦИЯ С ПОИСКОВЫМ ДВИЖКОМ АКТИВНА</div>
  <div class="main-split-panel">
  <div class="panel-left-side">
  <div class="search-bar-container">
@@ -68,61 +68,85 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
  </div>
 </div>
 <script>
-// Конфигурация встроенного API поиска Google
-const GOOGLE_API_KEY = "AIzaSyBTIRtwNC-qhwoEXG1BCCXnt6OLvXYEZBU"; 
-const GOOGLE_CX = "b158d1ad760d4425e"; 
-
 async function openGoogleInFrame() {
-  const searchInput = document.getElementById("live-search");
-  let query = searchInput.value.trim();
-  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
-  
-  const resultsContainer = document.getElementById("google-search-results");
-  resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Поиск матчей в Google API...</p>';
+ const searchInput = document.getElementById("live-search");
+ let query = searchInput.value.trim();
+ if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
+ 
+ const resultsContainer = document.getElementById("google-search-results");
+ resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Поиск матчей в базе расписаний...</p>';
 
-  // Скрытый технический фоновый хвост
-  let fullQuery = "все будущие игры в винлайн за 7 дней " + query;
-  
-  // Правильный рабочий URL без лишних слэшей и квадратных скобок
-  let url = "https://googleapis.com" + GOOGLE_API_KEY + "&cx=" + GOOGLE_CX + "&q=" + encodeURIComponent(fullQuery);
+ // Скрытый фоновый запрос для точного поиска игр
+ let fullQuery = "site:sports.ru OR site:flashscore.ru OR site:championat.com все будущие игры за 7 дней " + query;
+ 
+ // Используем открытый API поиск DuckDuckGo (HTML парсинг через CORS-прокси)
+ let url = `https://allorigins.win{encodeURIComponent('https://duckduckgo.com' + encodeURIComponent(fullQuery))}`;
 
-  try {
-    let response = await fetch(url);
-    let data = await response.json();
+ try {
+   let response = await fetch(url);
+   let data = await response.json();
+   
+   // Создаем виртуальный парсер документа
+   let parser = new DOMParser();
+   let doc = parser.parseFromString(data.contents, "text/html");
+   let results = doc.querySelectorAll(".web-result");
 
-    if (!data.items || data.items.length === 0) {
-      resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Матчей на ближайшие 7 дней не найдено.</p>';
-      return;
-    }
+   if (results.length === 0) {
+     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Матчей на ближайшие 7 дней не найдено.</p>';
+     return;
+   }
 
-    resultsContainer.innerHTML = "";
+   resultsContainer.innerHTML = "";
 
-    // Отрисовка карточек найденных спортивных событий
-    data.items.forEach(item => {
-      const matchCard = document.createElement("div");
-      matchCard.className = "match-card";
-      
-      matchCard.innerHTML = `
-        <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
-          🏆 Расписание / Трансляция
-        </div>
-        <a href="${item.link}" target="_blank" class="match-link">
-          ${item.title}
-        </a>
-        <div class="match-snippet">
-          ${item.snippet}
-        </div>
-      `;
-      resultsContainer.appendChild(matchCard);
-    });
+   // Берем первые 5 самых актуальных ссылок на матчи
+   let count = 0;
+   results.forEach(result => {
+     if (count >= 5) return;
+     
+     let titleEl = result.querySelector(".result__title a");
+     let snippetEl = result.querySelector(".result__snippet");
+     
+     if (titleEl && snippetEl) {
+       let title = titleEl.innerText;
+       let link = titleEl.getAttribute("href");
+       let snippet = snippetEl.innerText;
 
-    // Запускаем калькулятор в правом окне
-    updateVerdictPanel(query);
+       // Очищаем редирект-ссылки DuckDuckGo до прямых адресов сайтов
+       if (link.includes("uddg=")) {
+         link = decodeURIComponent(link.split("uddg=")[1].split("&")[0]);
+       }
 
-  } catch (error) {
-    console.error("Ошибка поиска:", error);
-    resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка соединения с сервером Google API.</p>';
-  }
+       const matchCard = document.createElement("div");
+       matchCard.className = "match-card";
+       
+       matchCard.innerHTML = `
+         <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
+           🏆 Ближайшее событие
+         </div>
+         <a href="${link}" target="_blank" class="match-link">
+           ${title}
+         </a>
+         <div class="match-snippet">
+           ${snippet}
+         </div>
+       `;
+       resultsContainer.appendChild(matchCard);
+       count++;
+     }
+   });
+
+   if (count === 0) {
+     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Информация временно недоступна. Попробуйте еще раз.</p>';
+     return;
+   }
+
+   // Запускаем калькулятор в правом окне
+   updateVerdictPanel(query);
+
+ } catch (error) {
+   console.error("Ошибка поиска:", error);
+   resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка получения данных от поискового сервера.</p>';
+ }
 }
 
 function updateVerdictPanel(teamName) {
@@ -138,7 +162,7 @@ function updateVerdictPanel(teamName) {
  <div class="verdict-box">
  <div class="verdict-title">Анализ запроса: ${teamName}</div>
  <div class="market-section">
- <div class="market-title">Основной исход (Поисковый Анализ Google)</div>
+ <div class="market-title">Основной исход (Поисковый Анализ)</div>
  <div class="stats-row"><span>Вероятность Победы 1:</span><strong>${p1}</strong></div>
  <div class="stats-row"><span>Вероятность Ничьей X:</span><strong>${x}</strong></div>
  <div class="stats-row"><span>Вероятность Победы 2:</span><strong>${p2}</strong></div>
