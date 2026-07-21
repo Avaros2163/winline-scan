@@ -86,10 +86,17 @@ function startSearch() {
  let query = searchInput.value.trim();
  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
  
- // Скрытый фоновый запрос, который подмешивается автоматически
+ const resultsContainer = document.querySelector(".google-frame-container");
+ 
+ // Проверяем, загрузился ли официальный скрипт Google
+ if (typeof google === 'undefined' || !google.search || !google.search.cse || !google.search.cse.element) {
+   resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Инициализация поискового модуля Google... Повторите попытку через секунду.</p>';
+   return;
+ }
+
  let fullQuery = "все будущие игры в винлайн за 7 дней " + query;
  
- // Управляем официальным элементом Google на странице, передавая ему скрытый текст
+ // Запускаем официальный поиск Google
  const element = google.search.cse.element.getElement('match-search');
  if (element) {
    element.execute(fullQuery);
