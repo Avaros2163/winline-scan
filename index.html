@@ -65,31 +65,30 @@ h1 { color: var(--text-title); margin: 0 0 5px 0; font-size: 22px; text-transfor
 </div>
 <script>
 function startGoogleSearch() {
- const searchInput = document.getElementById("live-search");
- let query = searchInput.value.trim();
- if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
- 
- // Скрытый фоновый хвост
- let hiddenTail = "все будущие игры в винлайн за 7 дней ";
- let fullQuery = hiddenTail + query;
- 
- // Ссылка для Google
- let googleUrl = "https://google.com" + encodeURIComponent(fullQuery);
- 
- // Открываем Google в новой вкладке
- window.open(googleUrl, '_blank');
- 
- // Обновляем статус в левом окне
- const leftBox = document.getElementById("left-status-box");
- leftBox.innerHTML = `
-   <div style="font-size: 40px; margin-bottom: 15px;">🚀</div>
-   <div style="font-size: 15px; color: #fff; font-weight: bold; margin-bottom: 10px;">Запрос успешно отправлен в Google!</div>
-   <div style="font-size: 13px; color: var(--winline-orange);">Ищем: "${fullQuery}"</div>
-   <p style="font-size: 12px; color: #64748b; margin-top: 15px; max-width: 300px;">Расписание матчей открылось в новой вкладке вашего браузера без блокировок сети.</p>
- `;
+  const searchInput = document.getElementById("live-search");
+  let query = searchInput.value.trim();
+  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
+  
+  // Создаем чистый поисковый запрос
+  let textToSearch = "все будущие игры в винлайн за 7 дней " + query;
+  
+  // Собираем ссылку. Обратите внимание на /search?q= — это разделитель!
+  let googleUrl = "https://google.com" + encodeURIComponent(textToSearch);
+  
+  // Открываем вкладку
+  window.open(googleUrl, '_blank');
+  
+  // Обновляем статус в левом окне
+  const leftBox = document.getElementById("left-status-box");
+  leftBox.innerHTML = `
+    <div style="font-size: 40px; margin-bottom: 15px;">🚀</div>
+    <div style="font-size: 15px; color: #fff; font-weight: bold; margin-bottom: 10px;">Запрос успешно отправлен в Google!</div>
+    <div style="font-size: 13px; color: var(--winline-orange);">Ищем: "${textToSearch}"</div>
+    <p style="font-size: 12px; color: #64748b; margin-top: 15px; max-width: 300px;">Расписание матчей открылось в новой вкладке вашего браузера без блокировок сети.</p>
+  `;
 
- // Запускаем калькулятор вероятностей
- updateVerdictPanel(query);
+  // Запускаем калькулятор вероятностей
+  updateVerdictPanel(query);
 }
 
 function updateVerdictPanel(teamName) {
