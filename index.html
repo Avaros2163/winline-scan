@@ -73,54 +73,56 @@ const GOOGLE_API_KEY = "AIzaSyBTIRtwNC-qhwoEXG1BCCXnt6OLvXYEZBU";
 const GOOGLE_CX = "b158d1ad760d4425e"; 
 
 async function openGoogleInFrame() {
- const searchInput = document.getElementById("live-search");
- let query = searchInput.value.trim();
- if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
- 
- const resultsContainer = document.getElementById("google-search-results");
- resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Поиск матчей в Google API...</p>';
+  const searchInput = document.getElementById("live-search");
+  let query = searchInput.value.trim();
+  if (query.length < 2) { alert("Пожалуйста, введите название."); return; }
+  
+  const resultsContainer = document.getElementById("google-search-results");
+  resultsContainer.innerHTML = '<p style="text-align:center; color: var(--winline-orange); margin-top: 20px;">Поиск матчей в Google API...</p>';
 
- // Скрытый технический фоновый хвост
- let fullQuery = "все будущие игры в винлайн за 7 дней " + query;
- let url = `https://googleapis.com{GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(fullQuery)}`;
+  // Скрытый технический фоновый хвост
+  let fullQuery = "все будущие игры в винлайн за 7 дней " + query;
+  
+  // Правильный рабочий URL без лишних слэшей и квадратных скобок
+  let url = "https://googleapis.com" + GOOGLE_API_KEY + "&cx=" + GOOGLE_CX + "&q=" + encodeURIComponent(fullQuery);
 
- try {
-   let response = await fetch(url);
-   let data = await response.json();
+  try {
+    let response = await fetch(url);
+    let data = await response.json();
 
-   if (!data.items || data.items.length === 0) {
-     resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Матчей на ближайшие 7 дней не найдено.</p>';
-     return;
-   }
+    if (!data.items || data.items.length === 0) {
+      resultsContainer.innerHTML = '<p style="text-align:center; margin-top: 20px;">Матчей на ближайшие 7 дней не найдено.</p>';
+      return;
+    }
 
-   resultsContainer.innerHTML = "";
+    resultsContainer.innerHTML = "";
 
-   // Отрисовка карточек найденных спортивных событий
-   data.items.forEach(item => {
-     const matchCard = document.createElement("div");
-     matchCard.className = "match-card";
-     
-     matchCard.innerHTML = `
-       <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
-         🏆 Расписание / Трансляция
-       </div>
-       <a href="${item.link}" target="_blank" class="match-link">
-         ${item.title}
-       </a>
-       <div class="match-snippet">
-         ${item.snippet}
-       </div>
-     `;
-     resultsContainer.appendChild(matchCard);
-   });
+    // Отрисовка карточек найденных спортивных событий
+    data.items.forEach(item => {
+      const matchCard = document.createElement("div");
+      matchCard.className = "match-card";
+      
+      matchCard.innerHTML = `
+        <div style="font-size: 11px; color: var(--winline-orange); font-weight: bold; margin-bottom: 4px; text-transform: uppercase;">
+          🏆 Расписание / Трансляция
+        </div>
+        <a href="${item.link}" target="_blank" class="match-link">
+          ${item.title}
+        </a>
+        <div class="match-snippet">
+          ${item.snippet}
+        </div>
+      `;
+      resultsContainer.appendChild(matchCard);
+    });
 
-   // Запускаем калькулятор в правом окне
-   updateVerdictPanel(query);
+    // Запускаем калькулятор в правом окне
+    updateVerdictPanel(query);
 
- } catch (error) {
-   console.error("Ошибка поиска:", error);
-   resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка соединения с сервером Google API.</p>';
- }
+  } catch (error) {
+    console.error("Ошибка поиска:", error);
+    resultsContainer.innerHTML = '<p style="text-align:center; color:var(--red); margin-top: 20px;">Ошибка соединения с сервером Google API.</p>';
+  }
 }
 
 function updateVerdictPanel(teamName) {
