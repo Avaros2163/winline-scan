@@ -74,7 +74,7 @@ function startGoogleSearch() {
  let fullQuery = hiddenTail + query;
  
  // Ссылка для Google
- let googleUrl = "https://google.com" + encodeURIComponent(fullQuery);
+ let googleUrl = `https://google.com{encodeURIComponent(fullQuery)}`;
  
  // Открываем Google в новой вкладке
  window.open(googleUrl, '_blank');
